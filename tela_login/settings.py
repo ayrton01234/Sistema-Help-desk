@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'menu.apps.MenuConfig',
+    
+    
 
     # rest framework
     'rest_framework',
@@ -93,7 +96,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "brisa_db",
+        'NAME': "cadastro",
         'USER': "root",
         'PASSWORD': os.getenv("DB_PASSWORD"),
         'HOST': "localhost",

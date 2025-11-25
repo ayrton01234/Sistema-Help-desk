@@ -27,7 +27,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            return redirect('menu_home')
         else:
             messages.error(request, 'CPF ou senha inválidos.')
             return render(request, 'authentication/login.html')
@@ -37,7 +37,11 @@ def login_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, 'authentication/dashboard.html')
+    return render(request, 'menu_home')
+
+@login_required
+def menu_view(request):
+    return redirect('menu_home')
 
 
 def register_view(request):
