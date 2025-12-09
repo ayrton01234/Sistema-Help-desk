@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = [
             'url', 'id', 'username', 'email', 'first_name', 'last_name',
             'cpf', 'cnpj', 'telefone', 'logradouro', 'bairro',
-            'cidade', 'uf', 'password'
+            'cidade', 'uf', 'password', 'cep', 'role', 'is_approved', 'password'
         ]
         extra_kwargs = {
             'password': {

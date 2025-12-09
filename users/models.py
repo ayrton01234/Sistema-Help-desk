@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from authentication.validators import validate_cpf
+from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     cpf = models.CharField(max_length=14, unique=True, verbose_name='CPF', validators=[validate_cpf])
@@ -15,6 +16,8 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'cpf'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'email']
 
+    objects = CustomUserManager() 
+
     def __str__(self):
         return self.cpf or self.username
     
@@ -27,7 +30,7 @@ class CustomUser(AbstractUser):
     is_approved = models.BooleanField(default=True)  # por padrão True para clientes
 
     # VOU DEIXAR DE OPICIONAL POR ENQUANTO (QUALQUER COISA MUDO DPS)
-    
+
     def is_employee(self):
         return self.role == 'funcionario' and self.is_approved
     
