@@ -7,6 +7,8 @@ from .forms import RegistrationForm
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import views as auth_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 
@@ -115,3 +117,17 @@ def password_reset_confirm(request, uidb64=None, token=None):
 def password_reset_complete(request):
     messages.success(request, "Senha redefinida com sucesso! Agora faça login.")
     return redirect("login")
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['role'] = user.role
+        token['is_approved'] = user.is_approved
+        token['cpf'] = user.cpf
+
+        return token
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

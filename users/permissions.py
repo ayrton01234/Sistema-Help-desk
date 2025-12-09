@@ -25,3 +25,21 @@ class IsApprovedEmployee(BasePermission):
             return True
 
         return False
+
+from rest_framework.permissions import BasePermission
+
+class IsFuncionario(BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated and
+            request.user.role == "funcionario" and
+            request.user.is_approved
+        )
+
+
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated and
+            request.user.role == "admin"
+        )
