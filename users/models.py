@@ -7,7 +7,7 @@ class CustomUser(AbstractUser):
     cpf = models.CharField(max_length=14, unique=True, verbose_name='CPF', validators=[validate_cpf])
     email = models.EmailField(unique=True, verbose_name='E-mail')
     telefone = models.CharField('Telefone', max_length=11, blank=True, null=True)
-    cnpj = models.CharField('CNPJ', max_length=18, unique=True, blank=True, null=True)
+    cnpj = models.CharField('CNPJ', max_length=14, unique=True, blank=True, null=True)
     logradouro = models.CharField('Logradouro', max_length=150, blank=True, null=True)
     bairro = models.CharField('Bairro', max_length=100, blank=True, null=True)
     cidade = models.CharField('Cidade', max_length=100, blank=True, null=True)
@@ -21,6 +21,11 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.cpf or self.username
     
+    def save(self, *args, **kwargs):
+        if self.cnpj == "":
+            self.cnpj = None
+        super().save(*args, **kwargs)
+    
     ROLE_CHOICES = (
     ('cliente', 'Cliente'),
     ('funcionario', 'Funcionário'),
@@ -29,7 +34,7 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='cliente')
     is_approved = models.BooleanField(default=True)  # por padrão True para clientes
 
-    # VOU DEIXAR DE OPICIONAL POR ENQUANTO (QUALQUER COISA MUDO DPS)
+    # VOU DEIXAR DE OPCIONAL POR ENQUANTO (QUALQUER COISA MUDO DPS)
 
     def is_employee(self):
         return self.role == 'funcionario' and self.is_approved

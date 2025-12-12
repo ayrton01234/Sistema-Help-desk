@@ -1,0 +1,46 @@
+from django.test import TestCase
+from users.models import CustomUser
+from rest_framework.test import APIClient
+
+class UserTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.admin = CustomUser.objects.create_superuser(
+            cpf="00000000000",
+            username="admin",
+            email="admin@test.com",
+            password="admin123",
+        )
+
+    def test_criar_cliente(self):
+        user = CustomUser.objects.create_user(
+            cpf="11111111111",
+            username="cliente",
+            password="1234",
+            role="cliente"
+        )
+        self.assertTrue(user.is_approved)
+
+    def test_criar_funcionario_fica_pendente(self):
+        user = CustomUser.objects.create_user(
+            cpf="22222222222",
+            username="func",
+            password="1234",
+            role="funcionario"
+        )
+        self.assertFalse(user.is_approved)
+
+    def test_aprovar_funcionario(self):
+        func = CustomUser.objects.create_user(
+            cpf="33333333333",
+            username="func2",
+            password="1234",
+            role="funcionario",
+            is_approved=False
+        )
+
+        func.is_approved = True
+        func.save()
+
+        self.assertTrue(func.is_approved)
