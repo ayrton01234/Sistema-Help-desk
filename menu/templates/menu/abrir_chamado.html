@@ -1,0 +1,226 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Abrir Chamado - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/abrir_chamado.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<div class="header-actions">
+    <div>
+        <h1><i class="fas fa-ticket-alt me-2"></i>Abrir Chamado</h1>
+        <p class="mb-0 mt-2">Descreva seu problema para que nossa equipe de suporte possa ajudar</p>
+    </div>
+    <a href="{% url 'citiesoft_home' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- FORMULÁRIO -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="content-card">
+            <form id="formAbrirChamado" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- SEÇÃO 1: INFORMAÇÕES BÁSICAS -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-user-circle me-2"></i>Informações Pessoais
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nome">Seu Nome *</label>
+                                <input type="text" class="form-control" id="nome" 
+                                    name="nome" placeholder="Seu nome completo" required>
+                                <small class="form-text text-muted">Como você gostaria de ser chamado</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" class="form-control" id="email" 
+                                    name="email" placeholder="seu.email@empresa.com" required>
+                                <small class="form-text text-muted">Usaremos para contato</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telefone">Telefone/Ramal *</label>
+                                <input type="text" class="form-control" id="telefone" 
+                                    name="telefone" placeholder="(85) 9 1234-5678 ou 1234" required>
+                                <small class="form-text text-muted">Telefone celular ou ramal interno</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="departamento">Departamento *</label>
+                                <select class="form-control" id="departamento" name="departamento" required>
+                                    <option value="">Selecione seu departamento...</option>
+                                    <option value="ti">TI - Tecnologia da Informação</option>
+                                    <option value="financeiro">Financeiro</option>
+                                    <option value="rh">RH - Recursos Humanos</option>
+                                    <option value="vendas">Vendas</option>
+                                    <option value="admin">Administrativo</option>
+                                    <option value="logistica">Logística</option>
+                                    <option value="operacional">Operacional</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: CLASSIFICAÇÃO DO CHAMADO -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-list me-2"></i>Classificação do Chamado
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tipo">Tipo de Chamado *</label>
+                                <select class="form-control" id="tipo" name="tipo" required onchange="atualizarCategoria()">
+                                    <option value="">Selecione o tipo...</option>
+                                    <option value="suporte">Suporte Técnico</option>
+                                    <option value="incidente">Incidente</option>
+                                    <option value="request">Requisição</option>
+                                    <option value="duvida">Dúvida</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                                <small class="form-text text-muted">Tipo de solicitação que você está fazendo</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="categoria">Categoria *</label>
+                                <select class="form-control" id="categoria" name="categoria" required>
+                                    <option value="">Selecione a categoria...</option>
+                                    <option value="hardware">Hardware</option>
+                                    <option value="software">Software</option>
+                                    <option value="rede">Rede e Internet</option>
+                                    <option value="email">Email</option>
+                                    <option value="impressora">Impressora</option>
+                                    <option value="sistema">Sistema</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                                <small class="form-text text-muted">Área afetada ou tema do chamado</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="prioridade">Prioridade *</label>
+                                <select class="form-control" id="prioridade" name="prioridade" required>
+                                    <option value="">Selecione a prioridade...</option>
+                                    <option value="baixa">🟢 Baixa - Sem pressa</option>
+                                    <option value="normal" selected>🟡 Normal - Padrão</option>
+                                    <option value="alta">🔴 Alta - Logo</option>
+                                    <option value="urgente">🔴 Urgente - ASAP</option>
+                                </select>
+                                <small class="form-text text-muted">Quanto de urgência tem seu chamado</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="equipamento">Equipamento Afetado</label>
+                                <input type="text" class="form-control" id="equipamento" 
+                                    name="equipamento" placeholder="Ex: NB-2025-001, Desktop sala 101...">
+                                <small class="form-text text-muted">Patrimônio do equipamento (opcional)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 3: DESCRIÇÃO DO PROBLEMA -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-pencil-alt me-2"></i>Descrição do Problema
+                    </h5>
+
+                    <div class="form-group">
+                        <label for="titulo">Título do Chamado *</label>
+                        <input type="text" class="form-control" id="titulo" 
+                            name="titulo" placeholder="Ex: Impressora não imprime, Internet lenta, Sistema fora do ar..." 
+                            maxlength="100" required>
+                        <small class="form-text text-muted">Resuma o problema em uma frase (máx. 100 caracteres)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descricao">Descrição Detalhada *</label>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                            rows="8" placeholder="Descreva em detalhes o problema:&#10;- O que está acontecendo?&#10;- Quando começou?&#10;- Como acontece?&#10;- Já tentou algo?" 
+                            maxlength="2000" required></textarea>
+                        <small class="form-text text-muted">Quanto mais detalhes, melhor. Máximo 2000 caracteres.</small>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 4: ANEXOS -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-paperclip me-2"></i>Anexar Arquivo (Opcional)
+                    </h5>
+
+                    <div class="form-group">
+                        <label for="anexo">Adicionar Print ou Arquivo</label>
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Clique ou arraste um arquivo aqui</span>
+                            <input type="file" id="anexo" name="anexo" style="display: none;">
+                        </div>
+                        <small class="form-text text-muted">
+                            Formatos: PNG, JPG, PDF, TXT, LOG | Máximo: 10MB
+                        </small>
+                    </div>
+                </div>
+
+                <!-- BOTÕES -->
+                <div class="form-actions">
+                    <button type="submit" class="quick-btn btn-save">
+                        <i class="fas fa-paper-plane me-2"></i>Enviar Chamado
+                    </button>
+                    <a href="{% url 'citiesoft_home' %}" class="quick-btn btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+
+                <!-- ALERTAS -->
+                <div id="successMessage" class="alert alert-success d-none mt-3">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <div>
+                        <strong>Chamado aberto com sucesso!</strong><br>
+                        ID: <strong id="ticketId"></strong><br>
+                        <small>Você receberá um email com os detalhes do seu chamado.</small>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="alert alert-danger d-none mt-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <div>
+                        <strong>Erro ao abrir o chamado</strong><br>
+                        <small>Verifique os dados e tente novamente.</small>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'menu/js/abrir_chamado.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,92 @@
+:root {
+    --citiesoft-blue: #0d6efd;
+    --citiesoft-bg: #eef3fa;
+    --error-red: #dc3545;
+}
+
+/* ===== BASE ===== */
+body {
+    background: var(--citiesoft-bg);
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.register-wrapper {
+    max-width: 580px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* ===== SELETOR ===== */
+.role-box {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.role-btn {
+    border: 2px solid var(--citiesoft-blue);
+    background: transparent;
+    color: var(--citiesoft-blue);
+    padding: 8px 22px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.role-btn.active,
+.role-btn:hover {
+    background: var(--citiesoft-blue);
+    color: #fff;
+}
+
+/* ===== SEÇÕES ===== */
+.section-title {
+    margin: 24px 0 16px;
+    padding-left: 10px;
+    border-left: 4px solid var(--citiesoft-blue);
+    font-weight: 700;
+    color: var(--citiesoft-blue);
+}
+
+/* ===== INPUTS ===== */
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+    transition: .2s;
+}
+
+input:focus {
+    border-color: var(--citiesoft-blue);
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+    outline: none;
+}
+
+/* ===== ERROS ===== */
+.is-invalid {
+    border-color: var(--error-red) !important;
+}
+
+.invalid-feedback {
+    display: none;
+    font-size: 0.85rem;
+    color: var(--error-red);
+}
+
+.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 576px) {
+    .register-wrapper {
+        margin: 20px;
+        padding: 24px;
+    }
+}
+

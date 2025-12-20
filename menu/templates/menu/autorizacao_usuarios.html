@@ -1,0 +1,174 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Autorização de Usuários - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/autorizacao_usuarios.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<h1><i class="fas fa-user-check"></i> Autorização de Usuários</h1>
+<p>Gerencie a autorização de novos usuários cadastrados - <span id="currentDate"></span></p>
+{% endblock %}
+
+{% block content %}
+<!-- Conteúdo Principal -->
+<div class="content-wrapper">
+    <!-- Filtros e Busca -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nome, email ou departamento...">
+        </div>
+        <div class="filter-group">
+            <select class="form-select" id="statusFilter">
+                <option value="">Todos os Status</option>
+                <option value="pendente">Pendente</option>
+                <option value="aprovado">Aprovado</option>
+                <option value="rejeitado">Rejeitado</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <button class="btn btn-primary" id="btnRefresh">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countPending">0</h3>
+                <p>Pendentes</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon approved">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countApproved">0</h3>
+                <p>Aprovados</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon rejected">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countRejected">0</h3>
+                <p>Rejeitados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Usuários -->
+    <div class="usuarios-container">
+        <div class="table-responsive">
+            <table class="table table-hover usuarios-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Departamento</th>
+                        <th>Data de Cadastro</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosTableBody">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensagem vazia -->
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhum usuário encontrado</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Usuário -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="user-details-content">
+                    <div class="detail-row">
+                        <label>Nome:</label>
+                        <span id="detailName"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Email:</label>
+                        <span id="detailEmail"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Departamento:</label>
+                        <span id="detailDepartment"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Telefone:</label>
+                        <span id="detailPhone"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Data de Cadastro:</label>
+                        <span id="detailDate"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Status:</label>
+                        <span id="detailStatus"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmTitle">Confirmar Ação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast de Notificação -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast" role="alert">
+        <div class="toast-header">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong class="me-auto" id="toastTitle"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
+{% endblock %}
+ <script src="{% static 'menu/js/template_citiesoft.js' %}"></script>
+{% block extra_js %}
+<script src="{% static 'menu/js/autorizacao_usuarios.js' %}"></script>
+{% endblock %}

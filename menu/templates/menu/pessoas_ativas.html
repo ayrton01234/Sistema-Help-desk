@@ -1,0 +1,303 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Pessoas Ativas - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/pessoas_ativas.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<h1><i class="fas fa-users"></i> Pessoas Ativas no Sistema</h1>
+<p>Visualize funcionários e clientes ativos - <span id="currentDate"></span></p>
+{% endblock %}
+
+{% block content %}
+<!-- Conteúdo Principal -->
+<div class="content-wrapper">
+    <!-- Filtros e Busca -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nome ou email...">
+        </div>
+        <div class="filter-group">
+            <select class="form-select" id="tipoFilter">
+                <option value="">Todos</option>
+                <option value="funcionario">Funcionários</option>
+                <option value="cliente">Clientes</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select class="form-select" id="statusFilter">
+                <option value="">Todos os Status</option>
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <button class="btn btn-primary" id="btnRefresh">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countTotal">0</h3>
+                <p>Total Ativo</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon funcionario">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countFuncionarios">0</h3>
+                <p>Funcionários</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cliente">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countClientes">0</h3>
+                <p>Clientes</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon online">
+                <i class="fas fa-circle-notch"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="countOnline">0</h3>
+                <p>Online Agora</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-section">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="todos-tab" data-bs-toggle="tab" data-bs-target="#todos" type="button">
+                    <i class="fas fa-list"></i> Todos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="funcionarios-tab" data-bs-toggle="tab" data-bs-target="#funcionarios" type="button">
+                    <i class="fas fa-briefcase"></i> Funcionários
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#clientes" type="button">
+                    <i class="fas fa-handshake"></i> Clientes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="online-tab" data-bs-toggle="tab" data-bs-target="#online" type="button">
+                    <i class="fas fa-circle"></i> Online
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Tabela de Pessoas -->
+    <div class="pessoas-container">
+        <!-- Tab Todos -->
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="todos">
+                <div class="table-responsive">
+                    <table class="table table-hover pessoas-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Departamento/Empresa</th>
+                                <th>Último Acesso</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todosTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="todosEmpty">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhuma pessoa encontrada</p>
+                </div>
+            </div>
+
+            <!-- Tab Funcionários -->
+            <div class="tab-pane fade" id="funcionarios">
+                <div class="table-responsive">
+                    <table class="table table-hover pessoas-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Departamento</th>
+                                <th>Último Acesso</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="funcionariosTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="funcionariosEmpty">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhum funcionário encontrado</p>
+                </div>
+            </div>
+
+            <!-- Tab Clientes -->
+            <div class="tab-pane fade" id="clientes">
+                <div class="table-responsive">
+                    <table class="table table-hover pessoas-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Empresa</th>
+                                <th>Último Acesso</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="clientesEmpty">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhum cliente encontrado</p>
+                </div>
+            </div>
+
+            <!-- Tab Online -->
+            <div class="tab-pane fade" id="online">
+                <div class="table-responsive">
+                    <table class="table table-hover pessoas-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Último Acesso</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="onlineTableBody">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" id="onlineEmpty">
+                    <i class="fas fa-inbox"></i>
+                    <p>Ninguém online agora</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes da Pessoa -->
+<div class="modal fade" id="pessoaDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes da Pessoa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pessoa-details-content">
+                    <div class="detail-row">
+                        <label>Nome:</label>
+                        <span id="detailName"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Email:</label>
+                        <span id="detailEmail"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Tipo:</label>
+                        <span id="detailTipo"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Departamento/Empresa:</label>
+                        <span id="detailDepto"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Primeiro Acesso:</label>
+                        <span id="detailFirstAccess"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Último Acesso:</label>
+                        <span id="detailLastAccess"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Status:</label>
+                        <span id="detailStatus"></span>
+                    </div>
+                    <div class="detail-row">
+                        <label>Total de Acessos:</label>
+                        <span id="detailTotalAcessos"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btnEditarPessoa">Editar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmTitle">Confirmar Ação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast de Notificação -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast" role="alert">
+        <div class="toast-header">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong class="me-auto" id="toastTitle"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'menu/js/pessoas_ativas.js' %}"></script>
+{% endblock %}

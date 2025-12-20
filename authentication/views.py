@@ -29,7 +29,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('menu_home')
+            return redirect('citiesoft_home')
         else:
             messages.error(request, 'CPF ou senha inválidos.')
             return render(request, 'authentication/login.html')
@@ -39,11 +39,11 @@ def login_view(request):
 
 @login_required
 def dashboard_view(request):
-    return render(request, 'menu_home')
+    return render(request, 'citiesoft_home.html')
 
 @login_required
 def menu_view(request):
-    return redirect('menu_home')
+    return redirect('citiesoft_home.html')
 
 
 def register_view(request):

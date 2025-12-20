@@ -1,0 +1,323 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Relatórios de Atendimento - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/relatorios_atendimento.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<div class="header-actions">
+    <div>
+        <h1><i class="fas fa-chart-bar me-2"></i>Relatórios de Atendimento</h1>
+        <p class="mb-0 mt-2">Análise e visualização de dados do sistema de atendimento</p>
+    </div>
+    <a href="{% url 'citiesoft_home' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- FILTROS -->
+<div class="content-card filter-card">
+    <div class="filter-header">
+        <h5><i class="fas fa-filter me-2"></i>Filtros</h5>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="filtro-periodo">Período</label>
+                <select class="form-control" id="filtro-periodo">
+                    <option value="hoje">Hoje</option>
+                    <option value="7dias" selected>Últimos 7 dias</option>
+                    <option value="30dias">Últimos 30 dias</option>
+                    <option value="90dias">Últimos 90 dias</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="filtro-status">Status do Chamado</label>
+                <select class="form-control" id="filtro-status">
+                    <option value="">Todos</option>
+                    <option value="aberto">Aberto</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="resolvido">Resolvido</option>
+                    <option value="fechado">Fechado</option>
+                    <option value="pendente">Pendente</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="filtro-departamento">Departamento</label>
+                <select class="form-control" id="filtro-departamento">
+                    <option value="">Todos</option>
+                    <option value="ti">TI</option>
+                    <option value="financeiro">Financeiro</option>
+                    <option value="rh">RH</option>
+                    <option value="vendas">Vendas</option>
+                    <option value="admin">Administrativo</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="filtro-prioridade">Prioridade</label>
+                <select class="form-control" id="filtro-prioridade">
+                    <option value="">Todas</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="normal">Normal</option>
+                    <option value="alta">Alta</option>
+                    <option value="urgente">Urgente</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="filter-actions">
+        <button class="btn btn-primary btn-sm" onclick="aplicarFiltros()">
+            <i class="fas fa-search me-1"></i>Aplicar Filtros
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="limparFiltros()">
+            <i class="fas fa-redo me-1"></i>Limpar
+        </button>
+        <button class="btn btn-success btn-sm" onclick="exportarRelatorio()">
+            <i class="fas fa-download me-1"></i>Exportar PDF
+        </button>
+    </div>
+</div>
+
+<!-- CARDS DE RESUMO -->
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #00A6FF, #0056b3);">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" id="total-chamados">342</div>
+                <div class="stat-label">Total de Chamados</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" id="resolvidos">287</div>
+                <div class="stat-label">Resolvidos</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #ffc107, #ff9800);">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" id="em-andamento">42</div>
+                <div class="stat-label">Em Andamento</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #dc3545, #bd2130);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value" id="pendentes">13</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GRÁFICOS -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-chart-pie me-2"></i>Chamados por Status</h5>
+            <div class="chart-container">
+                <canvas id="chartStatus"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Chamados por Departamento</h5>
+            <div class="chart-container">
+                <canvas id="chartDepartamento"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Chamados por Prioridade</h5>
+            <div class="chart-container">
+                <canvas id="chartPrioridade"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-chart-area me-2"></i>Tendência Diária</h5>
+            <div class="chart-container">
+                <canvas id="chartTendencia"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-tachometer-alt me-2"></i>Indicadores de Desempenho</h5>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Taxa de Resolução</div>
+                        <div class="kpi-value">
+                            <span class="value">83.9%</span>
+                            <span class="badge badge-success">+2.5%</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 83.9%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Tempo Médio de Resposta</div>
+                        <div class="kpi-value">
+                            <span class="value">2h 15min</span>
+                            <span class="badge badge-info">-30min</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Satisfação do Cliente</div>
+                        <div class="kpi-value">
+                            <span class="value">4.7/5.0</span>
+                            <span class="badge badge-warning">+0.2</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: 94%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABELA DE CHAMADOS -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="content-card">
+            <h5 class="card-title"><i class="fas fa-list me-2"></i>Chamados Recentes</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Solicitante</th>
+                            <th>Departamento</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Data de Abertura</th>
+                            <th>Tempo em Aberto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#1001</strong></td>
+                            <td>Problema com impressora</td>
+                            <td>João Silva</td>
+                            <td><span class="badge bg-primary">TI</span></td>
+                            <td><span class="badge bg-warning">Normal</span></td>
+                            <td><span class="badge bg-success">Resolvido</span></td>
+                            <td>12/12/2025</td>
+                            <td>2h 30min</td>
+                        </tr>
+                        <tr>
+                            <td><strong>#1000</strong></td>
+                            <td>Erro ao acessar sistema</td>
+                            <td>Maria Santos</td>
+                            <td><span class="badge bg-success">Vendas</span></td>
+                            <td><span class="badge bg-danger">Urgente</span></td>
+                            <td><span class="badge bg-info">Em Andamento</span></td>
+                            <td>12/12/2025</td>
+                            <td>1h 15min</td>
+                        </tr>
+                        <tr>
+                            <td><strong>#999</strong></td>
+                            <td>Solicitação de novo usuário</td>
+                            <td>Pedro Costa</td>
+                            <td><span class="badge bg-info">RH</span></td>
+                            <td><span class="badge bg-secondary">Baixa</span></td>
+                            <td><span class="badge bg-warning">Pendente</span></td>
+                            <td>11/12/2025</td>
+                            <td>22h 45min</td>
+                        </tr>
+                        <tr>
+                            <td><strong>#998</strong></td>
+                            <td>Problema com rede</td>
+                            <td>Ana Costa</td>
+                            <td><span class="badge bg-primary">TI</span></td>
+                            <td><span class="badge bg-danger">Urgente</span></td>
+                            <td><span class="badge bg-success">Resolvido</span></td>
+                            <td>11/12/2025</td>
+                            <td>3h 20min</td>
+                        </tr>
+                        <tr>
+                            <td><strong>#997</strong></td>
+                            <td>Atualizar software</td>
+                            <td>Carlos Lima</td>
+                            <td><span class="badge bg-danger">Admin</span></td>
+                            <td><span class="badge bg-warning">Normal</span></td>
+                            <td><span class="badge bg-info">Em Andamento</span></td>
+                            <td>10/12/2025</td>
+                            <td>36h 10min</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="{% static 'menu/js/relatorios_atendimento.js' %}"></script>
+{% endblock %}

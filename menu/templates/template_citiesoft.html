@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Página - Citiesoft{% endblock %}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'menu/img/favico.ico' %}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- CSS Base (obrigatório em todas as telas) -->
+    <link href="{% static 'menu/css/template_citiesoft.css' %}" rel="stylesheet">
+    
+    <!-- CSS Específico da Página (opcional) -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 🔴 SCRIPT COM URLs DO DJANGO - LOGO APÓS <body> -->
+    <!-- Este script DEVE estar ANTES de qualquer outro JS -->
+    <script>
+        // URLs do Django injetadas no JavaScript como objeto global
+        window.DjangoURLs = {
+            citiesoft_home: '{% url "citiesoft_home" %}',
+            abrir_chamado: '{% url "abrir_chamado" %}',
+            cadastro_ativo: '{% url "cadastro_ativo" %}',
+            cadastro_contrato: '{% url "cadastro_contrato" %}',
+            relatorios_atendimento: '{% url "relatorios_atendimento" %}',
+            relatorio_ativos: '{% url "relatorio_ativos" %}'
+        };
+        console.log('✅ URLs Django carregadas:', window.DjangoURLs);
+    </script>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <button class="navbar-toggler" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="company-logo-mobile">
+            <h2>Citiesoft</h2>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <i class="fas fa-bars sidebar-collapsed-icon"></i>
+        
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <div class="company-logo">
+                    <h2 class="company-logo-text">Citiesoft</h2>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar">{{ user.first_name|first|upper }}</div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
+                    <div class="user-role">Sistema</div>
+                </div>
+            </div>
+
+            <div class="sidebar-menu-container">
+                <ul class="nav flex-column" id="dynamicMenu"></ul>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <form method="POST" action="{% url 'logout' %}" style="width: 100%;">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair do Sistema</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <div class="top-bar-logo">
+                <h2 class="top-bar-logo-text">Citiesoft</h2>
+            </div>
+        </div>
+
+        <div class="top-bar-status-container">
+            <div class="top-bar-status">
+                <span class="status-indicator"></span>
+                <span>Online</span>
+            </div>
+            <button class="btn-toggle-theme" id="toggleTheme">
+                <i class="fa-solid fa-moon"></i>
+                <span>Modo Escuro</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Content Header -->
+        <div class="content-header">
+            {% block page_header %}
+            <h1><i class="fas fa-icon"></i> Título da Página</h1>
+            <p>Descrição da página - <span id="currentDate"></span></p>
+            {% endblock %}
+        </div>
+
+        <!-- ADICIONE O CONTEÚDO ESPECÍFICO AQUI -->
+        {% block content %}
+        <!-- Seu conteúdo aqui: cards, tabelas, formulários, etc -->
+        {% endblock %}
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ===== INJETAR URLS DJANGO ===== -->
+    <script>
+        // Objeto global com as URLs do Django
+        window.DjangoURLs = {
+            citiesoft_home: '{% url "citiesoft_home" %}',
+            abrir_chamado: '{% url "abrir_chamado" %}',
+            cadastro_ativo: '{% url "cadastro_ativo" %}',
+            cadastro_contrato: '{% url "cadastro_contrato" %}',
+            relatorios_atendimento: '{% url "relatorios_atendimento" %}',
+            relatorio_ativos: '{% url "relatorio_ativos" %}'
+        };
+        
+        console.log('✓ URLs Django injetadas:', window.DjangoURLs);
+    </script>
+    
+    <!-- JS Base (obrigatório em todas as telas) -->
+    <script src="{% static 'menu/js/template_citiesoft.js' %}"></script>
+    
+    <!-- JS Específico da Página (opcional) -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,227 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Dashboard - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/citiesoft_home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<h1><i class="fas fa-tachometer-alt"></i> Painel de Controle</h1>
+<p>Visão geral do sistema - <span id="currentDate"></span></p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Quick Actions -->
+<div class="quick-actions-container">
+    <button class="quick-btn" onclick="window.location.href='{% url 'cadastro_ativo' %}'">
+        <i class="fas fa-laptop-medical"></i> Novo Ativo
+    </button>
+    <button class="quick-btn" onclick="window.location.href='{% url 'abrir_chamado' %}'">
+        <i class="fas fa-ticket-alt"></i> Novo Ticket
+    </button>
+    <button class="quick-btn" onclick="window.location.href='{% url 'cadastro_contrato' %}'">
+        <i class="fas fa-file-invoice"></i> Cadastrar Contrato
+    </button>
+    <button class="quick-btn" onclick="window.location.href='{% url 'relatorios_atendimento' %}'">
+        <i class="fas fa-file-pdf"></i> Relatório
+    </button>
+</div>
+
+<!-- Stat Cards -->
+<div class="stats-container">
+    <div class="stat-card blue">
+        <i class="fas fa-laptop"></i>
+        <h3 id="activosCount">0</h3>
+        <p>Ativos Totais</p>
+    </div>
+    <div class="stat-card red">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3 id="ativosManutencaoCount">0</h3>
+        <p>Em Manutenção</p>
+    </div>
+    <div class="stat-card orange">
+        <i class="fas fa-ticket-alt"></i>
+        <h3 id="ticketsAbertosCount">{{ tickets_abertos }}</h3>
+        <p>Tickets Abertos</p>
+    </div>
+    <div class="stat-card purple">
+        <i class="fas fa-users"></i>
+        <h3 id="usuariosCount">0</h3>
+        <p>Usuários Ativos</p>
+    </div>
+</div>
+
+<!-- Cards: Gráficos e Informações -->
+<div class="cards-container">
+    <!-- Ativos por Status -->
+    <div class="content-card">
+        <h5><i class="fas fa-chart-pie me-2"></i>Ativos por Status</h5>
+        <div class="chart-container">
+            <canvas id="ativosChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Tickets por Prioridade -->
+    <div class="content-card">
+        <h5><i class="fas fa-chart-bar me-2"></i>Tickets por Prioridade</h5>
+        <div class="chart-container">
+            <canvas id="ticketsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Status do Sistema -->
+    <div class="content-card">
+        <h5><i class="fas fa-server me-2"></i>Status do Sistema</h5>
+        <div class="system-info-item">
+            <div class="system-info-icon orange">
+                <i class="fas fa-hdd"></i>
+            </div>
+            <div class="system-info-content">
+                <div class="system-info-label">Armazenamento</div>
+                <div class="system-info-value">256 GB / 500 GB</div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: 51%; background: linear-gradient(90deg, #ffc107, #ff9800);"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="system-info-item">
+            <div class="system-info-icon green">
+                <i class="fas fa-microchip"></i>
+            </div>
+            <div class="system-info-content">
+                <div class="system-info-label">CPU</div>
+                <div class="system-info-value">45% em uso</div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: 45%; background: linear-gradient(90deg, #28a745, #20c997);"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="system-info-item">
+            <div class="system-info-icon blue">
+                <i class="fas fa-memory"></i>
+            </div>
+            <div class="system-info-content">
+                <div class="system-info-label">Memória RAM</div>
+                <div class="system-info-value">6.2 GB / 16 GB</div>
+                <div class="progress-custom">
+                    <div class="progress-bar-custom" style="width: 38%; background: linear-gradient(90deg, #00A6FF, #0056b3);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas de KPI -->
+    <div class="content-card">
+        <h5><i class="fas fa-chart-line me-2"></i>Métricas de KPI</h5>
+        <div class="kpi-item">
+            <div class="kpi-header">
+                <span class="kpi-label">Taxa de Resolução</span>
+                <span class="kpi-value success">94.2%</span>
+            </div>
+            <div class="progress-custom">
+                <div class="progress-bar-custom" style="width: 94.2%; background: linear-gradient(90deg, #28a745, #20c997);"></div>
+            </div>
+        </div>
+
+        <div class="kpi-item">
+            <div class="kpi-header">
+                <span class="kpi-label">SLA Cumprido</span>
+                <span class="kpi-value warning">87.5%</span>
+            </div>
+            <div class="progress-custom">
+                <div class="progress-bar-custom" style="width: 87.5%; background: linear-gradient(90deg, #ffc107, #ff9800);"></div>
+            </div>
+        </div>
+
+        <div class="kpi-item">
+            <div class="kpi-header">
+                <span class="kpi-label">Satisfação Cliente</span>
+                <span class="kpi-value success">4.7/5.0</span>
+            </div>
+            <div class="progress-custom">
+                <div class="progress-bar-custom" style="width: 94%; background: linear-gradient(90deg, #00A6FF, #0056b3);"></div>
+            </div>
+        </div>
+
+        <div class="kpi-item">
+            <div class="kpi-header">
+                <span class="kpi-label">Uptime</span>
+                <span class="kpi-value success">99.8%</span>
+            </div>
+            <div class="progress-custom">
+                <div class="progress-bar-custom" style="width: 99.8%; background: linear-gradient(90deg, #28a745, #20c997);"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tickets Recentes - Full Width -->
+<div class="full-width-container">
+    <div class="content-card">
+        <h5><i class="fas fa-history me-2"></i>Tickets Recentes</h5>
+        <div class="table-responsive">
+            <table class="activity-table table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Solicitante</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="ticketsTable"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Ativos e Contratos - 2 Colunas -->
+<div class="cards-container" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="content-card">
+        <h5><i class="fas fa-laptop me-2"></i>Ativos Recentes</h5>
+        <div class="table-responsive">
+            <table class="activity-table table">
+                <thead>
+                    <tr>
+                        <th>Patrimônio</th>
+                        <th>Tipo</th>
+                        <th>Departamento</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="ativosTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <h5><i class="fas fa-file-contract me-2"></i>Contratos</h5>
+        <div class="table-responsive">
+            <table class="activity-table table">
+                <thead>
+                    <tr>
+                        <th>Contrato</th>
+                        <th>Fornecedor</th>
+                        <th>Vencimento</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="contratosTable"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="{% static 'menu/js/citiesoft_home.js' %}"></script>
+{% endblock %}

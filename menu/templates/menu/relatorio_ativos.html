@@ -1,0 +1,150 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Relatório de Ativos - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/relatorio_ativos.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<div class="header-actions">
+    <div>
+        <h1><i class="fas fa-file-alt me-2"></i>Relatório de Ativos</h1>
+        <p class="mb-0 mt-2">Listagem completa de ativos do sistema - <span id="currentDate"></span></p>
+    </div>
+    <a href="{% url 'citiesoft_home' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <h5><i class="fas fa-filter"></i> Filtros</h5>
+    <div class="filter-row">
+        <div class="filter-group">
+            <label>Patrimônio</label>
+            <input type="text" id="filterPatrimonio" placeholder="Ex: NB-2025-001">
+        </div>
+        <div class="filter-group">
+            <label>Tipo de Ativo</label>
+            <select id="filterTipo">
+                <option value="">Todos</option>
+                <option value="notebook">Notebook</option>
+                <option value="desktop">Desktop</option>
+                <option value="impressora">Impressora</option>
+                <option value="monitor">Monitor</option>
+                <option value="servidor">Servidor</option>
+                <option value="switch">Switch</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Departamento</label>
+            <select id="filterDepartamento">
+                <option value="">Todos</option>
+                <option value="ti">TI</option>
+                <option value="financeiro">Financeiro</option>
+                <option value="rh">Recursos Humanos</option>
+                <option value="vendas">Vendas</option>
+                <option value="operacoes">Operações</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Status</label>
+            <select id="filterStatus">
+                <option value="">Todos</option>
+                <option value="ativo">Ativo</option>
+                <option value="manutencao">Em Manutenção</option>
+                <option value="desativado">Desativado</option>
+            </select>
+        </div>
+    </div>
+    <div style="margin-top: 15px; text-align: right;">
+        <button class="btn-filter" onclick="aplicarFiltros()">
+            <i class="fas fa-search"></i> Filtrar
+        </button>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="stats-row">
+    <div class="stat-box">
+        <div class="stat-box-icon"><i class="fas fa-laptop"></i></div>
+        <div class="stat-box-value" id="totalAtivosStat">0</div>
+        <div class="stat-box-label">Total de Ativos</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-icon" style="color: #28a745;"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-box-value" id="totalAtivoAtivos" style="color: #28a745;">0</div>
+        <div class="stat-box-label">Ativos</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-icon" style="color: #ffc107;"><i class="fas fa-tools"></i></div>
+        <div class="stat-box-value" id="totalManutencao" style="color: #ffc107;">0</div>
+        <div class="stat-box-label">Em Manutenção</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-icon" style="color: #dc3545;"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-box-value" id="totalDesativado" style="color: #dc3545;">0</div>
+        <div class="stat-box-label">Desativados</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-icon" style="color: #17a2b8;"><i class="fas fa-list"></i></div>
+        <div class="stat-box-value" id="resultadosBuscas">0</div>
+        <div class="stat-box-label">Resultados</div>
+    </div>
+</div>
+
+<!-- Actions Bar -->
+<div class="actions-bar">
+    <button class="btn-export" onclick="exportarExcel()">
+        <i class="fas fa-download"></i> Exportar Excel
+    </button>
+    <button class="btn-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Imprimir
+    </button>
+</div>
+
+<!-- Table -->
+<div class="table-container">
+    <div class="table-header">
+        <h5><i class="fas fa-table me-2"></i>Ativos Cadastrados</h5>
+        <small id="totalRegistros">Total: 0 registros</small>
+    </div>
+    <div style="overflow-x: auto;">
+        <table class="table-custom" id="tabelaAtivos">
+            <thead>
+                <tr>
+                    <th>Patrimônio</th>
+                    <th>Tipo</th>
+                    <th>Marca/Modelo</th>
+                    <th>Departamento</th>
+                    <th>Responsável</th>
+                    <th>Data Aquisição</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaAtivosBody">
+                <tr>
+                    <td colspan="8" class="no-data">
+                        <i class="fas fa-inbox" style="font-size: 40px; opacity: 0.5; display: block; margin-bottom: 10px;"></i>
+                        Carregando dados...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-custom" id="paginacao"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'menu/js/relatorio_ativos.js' %}"></script>
+{% endblock %}

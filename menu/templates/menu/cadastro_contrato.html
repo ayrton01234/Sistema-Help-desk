@@ -1,0 +1,281 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Cadastro de Contrato - Citiesoft{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'menu/css/cadastro_contrato.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block page_header %}
+<div class="header-actions">
+    <div>
+        <h1><i class="fas fa-file-contract me-2"></i>Cadastro de Contrato</h1>
+        <p class="mb-0 mt-2">Registrar novo contrato com fornecedor ou cliente</p>
+    </div>
+    <a href="{% url 'citiesoft_home' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<!-- FORMULÁRIO -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="content-card">
+            <form id="formCadastroContrato" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- SEÇÃO 1: INFORMAÇÕES BÁSICAS -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                    </h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numero">Número do Contrato *</label>
+                                <input type="text" class="form-control" id="numero" 
+                                    name="numero" placeholder="CT-2025-001" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="tipo">Tipo de Contrato *</label>
+                                <select class="form-control" id="tipo" name="tipo" required>
+                                    <option value="">Selecione o tipo...</option>
+                                    <option value="fornecimento">Fornecimento</option>
+                                    <option value="servico">Serviço</option>
+                                    <option value="manutencao">Manutenção</option>
+                                    <option value="suporte">Suporte Técnico</option>
+                                    <option value="consultoria">Consultoria</option>
+                                    <option value="licenca">Licença de Software</option>
+                                    <option value="aluguel">Aluguel</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fornecedor">Fornecedor/Cliente *</label>
+                                <input type="text" class="form-control" id="fornecedor" 
+                                    name="fornecedor" placeholder="Nome da empresa" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cnpj">CNPJ</label>
+                                <input type="text" class="form-control" id="cnpj" 
+                                    name="cnpj" placeholder="XX.XXX.XXX/0001-XX">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="responsavel">Responsável pela Contratação *</label>
+                                <input type="text" class="form-control" id="responsavel" 
+                                    name="responsavel" placeholder="Nome completo" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email de Contato</label>
+                                <input type="email" class="form-control" id="email" 
+                                    name="email" placeholder="contato@empresa.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telefone">Telefone</label>
+                                <input type="text" class="form-control" id="telefone" 
+                                    name="telefone" placeholder="(85) 9 1234-5678">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="departamento">Departamento Responsável *</label>
+                                <select class="form-control" id="departamento" name="departamento" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="ti">TI</option>
+                                    <option value="financeiro">Financeiro</option>
+                                    <option value="rh">RH</option>
+                                    <option value="vendas">Vendas</option>
+                                    <option value="admin">Administrativo</option>
+                                    <option value="operacional">Operacional</option>
+                                    <option value="logistica">Logística</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: DATAS E PRAZOS -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-calendar me-2"></i>Datas e Prazos
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="data_inicio">Data de Início *</label>
+                                <input type="date" class="form-control" id="data_inicio" 
+                                    name="data_inicio" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="data_termino">Data de Término *</label>
+                                <input type="date" class="form-control" id="data_termino" 
+                                    name="data_termino" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="data_renovacao">Data de Renovação Automática</label>
+                                <input type="date" class="form-control" id="data_renovacao" 
+                                    name="data_renovacao">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dias_notificacao">Dias para Notificação (antes do vencimento)</label>
+                                <input type="number" class="form-control" id="dias_notificacao" 
+                                    name="dias_notificacao" placeholder="30" value="30">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 3: VALORES E FINANCEIRO -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-money-bill-wave me-2"></i>Valores e Financeiro
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="valor_total">Valor Total do Contrato *</label>
+                                <input type="number" class="form-control" id="valor_total" 
+                                    name="valor_total" placeholder="0,00" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="valor_mensal">Valor Mensal/Parcela</label>
+                                <input type="number" class="form-control" id="valor_mensal" 
+                                    name="valor_mensal" placeholder="0,00" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="moeda">Moeda *</label>
+                                <select class="form-control" id="moeda" name="moeda" required>
+                                    <option value="brl">Real (R$)</option>
+                                    <option value="usd">Dólar (US$)</option>
+                                    <option value="eur">Euro (€)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="forma_pagamento">Forma de Pagamento *</label>
+                                <select class="form-control" id="forma_pagamento" name="forma_pagamento" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="boleto">Boleto</option>
+                                    <option value="transferencia">Transferência</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="cartao">Cartão</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="condicao_pagamento">Condição de Pagamento</label>
+                                <select class="form-control" id="condicao_pagamento" name="condicao_pagamento">
+                                    <option value="">Selecione...</option>
+                                    <option value="a_vista">À Vista</option>
+                                    <option value="30_dias">30 Dias</option>
+                                    <option value="60_dias">60 Dias</option>
+                                    <option value="90_dias">90 Dias</option>
+                                    <option value="parcelado">Parcelado</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numero_parcelas">Número de Parcelas</label>
+                                <input type="number" class="form-control" id="numero_parcelas" 
+                                    name="numero_parcelas" placeholder="12">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 4: DESCRIÇÃO DO CONTRATO -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class="fas fa-align-left me-2"></i>Descrição do Contrato
+                    </h5>
+
+                    <div class="form-group">
+                        <label for="descricao">Descrição do Contrato *</label>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                            rows="4" placeholder="Descreva o objeto do contrato, produtos/serviços fornecidos..." required></textarea>
+                    </div>
+                </div>
+
+                <!-- BOTÕES -->
+                <div class="form-actions">
+                    <button type="submit" class="quick-btn btn-save">
+                        <i class="fas fa-save me-2"></i>Salvar Contrato
+                    </button>
+                    <a href="{% url 'citiesoft_home' %}" class="quick-btn btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+
+                <!-- ALERTAS -->
+                <div id="successMessage" class="alert alert-success d-none mt-3">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Contrato cadastrado com sucesso!</strong>
+                </div>
+
+                <div id="errorMessage" class="alert alert-danger d-none mt-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Erro ao cadastrar o contrato. Tente novamente.</strong>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'menu/js/cadastro_contrato.js' %}"></script>
+{% endblock %}
