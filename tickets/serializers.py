@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from users.models import CustomUser
 from .models import CategoriaTicket, StatusTicket, UrgenciaTicket, Ticket, InteracaoTicket, CampoPersonalizado
 from ativos.models import Ativo
 
@@ -62,3 +63,17 @@ class TicketCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['criado_por'] = self.context['request'].user
         return super().create(validated_data)
+
+class TicketAtribuicaoSerializer(serializers.Serializer):
+    funcionario = serializers.PrimaryKeyRelatedField(
+        queryset=CustomUser.objects.filter(
+            role='funcionario',
+            is_approved=True
+        )
+    )
+
+
+class TicketStatusUpdateSerializer(serializers.Serializer):
+    status = serializers.PrimaryKeyRelatedField(
+        queryset=StatusTicket.objects.all()
+    )

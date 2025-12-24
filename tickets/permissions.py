@@ -20,3 +20,24 @@ class CanAssignTicket(BasePermission):
             return True
 
         return False
+
+class IsAdminToAssignTicket(BasePermission):
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated and
+            request.user.role == 'admin'
+        )
+
+class CanUpdateTicketStatus(BasePermission):
+    """
+    Admin pode atualizar qualquer status.
+    Funcionário apenas se o ticket estiver atribuído a ele.
+    """
+    def has_object_permission(self, request, view, obj):
+        if request.user.role == 'admin':
+            return True
+
+        if request.user.role == 'funcionario':
+            return obj.atribuido_para == request.user
+
+        return False
