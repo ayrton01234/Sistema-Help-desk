@@ -23,12 +23,16 @@ urlpatterns = [
     
     # ========== ADMIN: BASE DE CONHECIMENTO ==========
     path('admin/conhecimento/', views.admin_base_conhecimento, name='admin_base_conhecimento'),
-    
+    path('cadastro_usuario/', views.cadastro_usuario, name='cadastro_usuario'),
     # APIs Admin
     path('api/artigos/', views.api_artigos_list, name='api_artigos_list'),
     path('api/artigos/create/', views.api_artigo_save, name='api_artigo_create'),
     path('api/artigos/<int:artigo_id>/update/', views.api_artigo_save, name='api_artigo_update'),
     path('api/artigos/<int:artigo_id>/delete/', views.api_artigo_delete, name='api_artigo_delete'),
+    path('api/conhecimento/artigos/<slug:slug>/rate/',views.avaliar_artigo,name='api_avaliacao'),
+    path('admin/conhecimento/artigo/<slug:slug>/preview/',views.artigo_preview_admin, name='artigo_preview_admin'),
+    
+
     
     # ========== PÚBLICO: BASE DE CONHECIMENTO (CLIENTES) ==========
     path('conhecimento/', views.base_conhecimento, name='base_conhecimento'),

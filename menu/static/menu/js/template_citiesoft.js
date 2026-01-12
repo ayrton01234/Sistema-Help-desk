@@ -74,7 +74,7 @@ function initializeMenuConfig() {
                 { 
                     id: 'cadastro-usuarios', 
                     title: 'Usuários', 
-                    url: window.DjangoURLs ? window.DjangoURLs.register : '#', 
+                    url: window.DjangoURLs ? window.DjangoURLs.cadastro_usuario : '#', 
                     icon: 'fas fa-user-cog' 
                 },
                 { 
@@ -125,12 +125,12 @@ function initializeMenuConfig() {
                     url: 'https://citiesoft.com.br/',  
                     icon: 'fas fa-laptop-code'   
                 },
-                { 
+                /*{ 
                     id: 'quem-somos', 
                     title: 'Quem Somos', 
-                    url:  'https://citiesoft.com.br/about', 
+                    url:  'https://citiesoft.com.br/actions', 
                     icon: 'fas fa-building'  
-                },
+                },*/    
                 /*{ 
                     id: 'artigos', 
                     title: 'Artigos', 

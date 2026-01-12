@@ -7,7 +7,9 @@
 {% block extra_css %}
 <link href="{% static 'menu/css/admin_base_conhecimento.css' %}" rel="stylesheet">
 <!-- TinyMCE CDN -->
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/kfkd4y531xykiu1kt6sh7jfavqjgoekr9czslw924bh34j32/tinymce/6/tinymce.min.js"
+        referrerpolicy="origin"></script>
+
 {% endblock %}
 
 {% block page_header %}
@@ -140,7 +142,8 @@
 </div>
 
 <!-- Modal Novo/Editar Artigo -->
-<div class="modal fade" id="articleModal" tabindex="-1" data-bs-backdrop="static">
+<div class="modal fade" id="articleModal" tabindex="-1">
+
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -363,7 +366,10 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+
+
+
+
 {% endblock %}
 
 {% block extra_js %}

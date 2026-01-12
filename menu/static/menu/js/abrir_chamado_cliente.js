@@ -1,6 +1,6 @@
-/* ===== ABRIR CHAMADO CLIENTE - JAVASCRIPT ===== */
+/* ===== ABRIR CHAMADO CLIENTE - JAVASCRIPT (VERSÃO FINAL) ===== */
 
-// ===== CATEGORIAS POR ÁREA =====
+// ===== CATEGORIAS POR ÁREA (NÃO USADAS NO BACKEND) =====
 const categoriasPorArea = {
     hardware: [
         { value: 'computador', text: 'Computador / Desktop' },
@@ -14,63 +14,39 @@ const categoriasPorArea = {
     software: [
         { value: 'sistema_operacional', text: 'Sistema Operacional' },
         { value: 'aplicativo', text: 'Aplicativo / Software' },
-        { value: 'licenca', text: 'Licença de Software' },
-        { value: 'atualizacao', text: 'Atualização de Software' },
-        { value: 'instalacao', text: 'Instalação de Software' },
-        { value: 'desempenho', text: 'Desempenho / Lentidão' },
-        { value: 'erro_software', text: 'Erro no Software' }
+        { value: 'licenca', text: 'Licença de Software' }
     ],
+
     rede: [
-        { value: 'internet', text: 'Conexão com Internet' },
+        { value: 'internet', text: 'Conexão com a Internet' },
         { value: 'wifi', text: 'Rede Wi-Fi' },
         { value: 'vpn', text: 'VPN / Acesso Remoto' },
-        { value: 'email', text: 'E-mail / Webmail' },
-        { value: 'firewall', text: 'Firewall / Segurança de Rede' },
-        { value: 'servidor_rede', text: 'Servidor de Rede' },
-        { value: 'compartilhamento', text: 'Compartilhamento de Arquivos' }
+        { value: 'outro_rede', text: 'Outro Problema de Rede' }
+    ],    
+    banco_dados: [
+        { value: 'acesso_bd', text: 'Acesso ao Banco de Dados' },
+        { value: 'desempenho_bd', text: 'Desempenho do Banco de Dados' },
+        { value: 'outro_bd', text: 'Outro Problema de Banco de Dados' }
     ],
     desenvolvimento: [
-        { value: 'bug', text: 'Correção de Bug' },
-        { value: 'nova_funcionalidade', text: 'Nova Funcionalidade' },
-        { value: 'melhoria', text: 'Melhoria / Otimização' },
-        { value: 'api', text: 'API / Integração' },
-        { value: 'deploy', text: 'Deploy / Publicação' },
-        { value: 'codigo', text: 'Revisão de Código' },
-        { value: 'documentacao', text: 'Documentação' }
+        { value: 'bug_sistema', text: 'Bug no Sistema / Aplicativo' },
+        { value: 'nova_funcionalidade', text: 'Solicitação de Nova Funcionalidade' },   
+        { value: 'outro_desenvolvimento', text: 'Outro Assunto de Desenvolvimento' }
+    ], 
+    suporte_usuario: [ 
+        { value: 'duvida_sistema', text: 'Dúvida sobre o Sistema / Aplicativo' },
+        { value: 'treinamento', text: 'Solicitação de Treinamento' },
+        { value: 'outro_suporte', text: 'Outro Assunto de Suporte ao Usuário' } 
     ],
-    banco_dados: [
-        { value: 'consulta', text: 'Consulta / Query' },
-        { value: 'desempenho_bd', text: 'Desempenho do Banco' },
-        { value: 'backup', text: 'Backup / Restore' },
-        { value: 'modelagem', text: 'Modelagem de Dados' },
-        { value: 'migracao', text: 'Migração de Dados' },
-        { value: 'integridade', text: 'Integridade de Dados' },
-        { value: 'acesso_bd', text: 'Acesso ao Banco' }
+    outros: [
+        { value: 'outros', text: 'Outros / Não se aplica' }
     ],
-    suporte_usuario: [
-        { value: 'acesso', text: 'Acesso / Login' },
-        { value: 'senha', text: 'Recuperação de Senha' },
-        { value: 'treinamento', text: 'Treinamento / Capacitação' },
-        { value: 'duvida', text: 'Dúvida / Consultoria' },
-        { value: 'permissao', text: 'Permissões / Autorizações' },
-        { value: 'usuario_novo', text: 'Novo Usuário' },
-        { value: 'usuario_inativo', text: 'Inativar Usuário' }
-    ],
+    
     seguranca: [
-        { value: 'virus', text: 'Vírus / Malware' },
-        { value: 'phishing', text: 'Phishing / Spam' },
-        { value: 'vazamento', text: 'Vazamento de Dados' },
-        { value: 'politica_seguranca', text: 'Política de Segurança' },
-        { value: 'auditoria', text: 'Auditoria / Compliance' },
-        { value: 'criptografia', text: 'Criptografia' },
-        { value: 'incidente', text: 'Incidente de Segurança' }
+        { value: 'incidente_seguranca', text: 'Incidente de Segurança' },
+        { value: 'vulnerabilidade', text: 'Vulnerabilidade / Ameaça' },
+        { value: 'outro_seguranca', text: 'Outro Assunto de Segurança' }
     ],
-    outro: [
-        { value: 'sugestao', text: 'Sugestão' },
-        { value: 'reclamacao', text: 'Reclamação' },
-        { value: 'elogio', text: 'Elogio' },
-        { value: 'outros', text: 'Outros' }
-    ]
 };
 
 // ===== VARIÁVEIS GLOBAIS =====
@@ -78,533 +54,346 @@ let currentStep = 1;
 let uploadedFiles = [];
 
 // ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✓ Inicializando Formulário de Abertura de Chamado...');
-    
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('✓ Inicializando formulário de abertura de chamado');
+
+    // ⚠️ NÃO USAR – categorias agora vêm do backend
     initializeAreaCategoria();
+
     initializeStepNavigation();
     initializeFormValidation();
     initializeFileUpload();
     initializeCharCounter();
     initializeFormReview();
-    
-    console.log('✓ Formulário inicializado com sucesso!');
+
+    console.log('✓ Formulário pronto');
 });
 
-// ===== ÁREA E CATEGORIA =====
+
+// =======================================================
+// ❌ FUNÇÃO DESATIVADA – NÃO USAR CATEGORIA DO FRONT
+// =======================================================
+
 function initializeAreaCategoria() {
     const areaSelect = document.getElementById('area');
-    
-    if (areaSelect) {
-        areaSelect.addEventListener('change', function() {
-            const area = this.value;
-            const categoriaSelect = document.getElementById('categoria');
-            
-            categoriaSelect.innerHTML = '<option value="">Selecione uma categoria</option>';
-            
-            if (area && categoriasPorArea[area]) {
-                categoriaSelect.disabled = false;
-                categoriasPorArea[area].forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.value;
-                    option.textContent = cat.text;
-                    categoriaSelect.appendChild(option);
-                });
-            } else {
-                categoriaSelect.disabled = true;
-                categoriaSelect.innerHTML = '<option value="">Selecione a área primeiro</option>';
-            }
-        });
-    }
+    const categoriaSelect = document.getElementById('categoria');
+
+    if (!areaSelect || !categoriaSelect) return;
+
+    areaSelect.addEventListener('change', function () {
+        const area = this.value;
+
+        categoriaSelect.innerHTML = '';
+        categoriaSelect.disabled = false;
+
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Selecione a categoria';
+        categoriaSelect.appendChild(opt);
+
+        if (categoriasPorArea[area]) {
+            categoriasPorArea[area].forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.value;
+                option.textContent = cat.text;
+                categoriaSelect.appendChild(option);
+            });
+        } else {
+            // fallback seguro
+            const option = document.createElement('option');
+            option.value = 'outros';
+            option.textContent = 'Outros / Não se aplica';
+            categoriaSelect.appendChild(option);
+        }
+    });
 }
+
+
+// =======================================================
+
 
 // ===== NAVEGAÇÃO ENTRE STEPS =====
 function initializeStepNavigation() {
-    // Botões Next
-    const nextButtons = document.querySelectorAll('.btn-next');
-    nextButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const nextStep = parseInt(this.getAttribute('data-next'));
-            if (validateCurrentStep()) {
-                goToStep(nextStep);
+    document.querySelectorAll('.btn-next').forEach(btn => {
+        btn.addEventListener('click', () => {
+
+            if (!validateCurrentStep()) return;
+
+            // se estiver no step 2, vai para o 3
+            if (currentStep === 2) {
+                goToStep(3);
+                return;
+            }
+
+            // se estiver no step 1, vai para o 2
+            if (currentStep === 1) {
+                goToStep(2);
+                return;
             }
         });
     });
 
-    // Botões Previous
-    const prevButtons = document.querySelectorAll('.btn-prev');
-    prevButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const prevStep = parseInt(this.getAttribute('data-prev'));
-            goToStep(prevStep);
+    document.querySelectorAll('.btn-prev').forEach(btn => {
+        btn.addEventListener('click', () => {
+            goToStep(parseInt(btn.dataset.prev));
         });
     });
 }
 
-function goToStep(stepNumber) {
-    // Atualizar step atual
-    const steps = document.querySelectorAll('.form-step');
-    steps.forEach(step => {
-        step.classList.remove('active');
-        if (parseInt(step.getAttribute('data-step')) === stepNumber) {
-            step.classList.add('active');
-        }
+
+
+function goToStep(step) {
+    document.querySelectorAll('.form-step').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.step) === step);
     });
 
-    // Atualizar indicadores de progresso
-    const progressSteps = document.querySelectorAll('.step');
-    progressSteps.forEach(step => {
-        const num = parseInt(step.getAttribute('data-step'));
-        if (num === stepNumber) {
-            step.classList.add('active');
-            step.classList.remove('completed');
-        } else if (num < stepNumber) {
-            step.classList.add('completed');
-            step.classList.remove('active');
-        } else {
-            step.classList.remove('active', 'completed');
-        }
+    document.querySelectorAll('.step').forEach(el => {
+        const n = parseInt(el.dataset.step);
+        el.classList.toggle('active', n === step);
+        el.classList.toggle('completed', n < step);
     });
 
-    // Gerenciar visibilidade dos botões
-    const prevBtn = document.querySelector('.btn-prev');
-    const nextBtn = document.querySelector('.btn-next');
-    const submitBtn = document.querySelector('.btn-submit');
+    document.querySelector('.btn-prev').style.display = step > 1 ? 'flex' : 'none';
+    document.querySelector('.btn-next').style.display = step < 3 ? 'flex' : 'none';
+    document.querySelector('.btn-submit').style.display = step === 3 ? 'flex' : 'none';
 
-    prevBtn.style.display = stepNumber > 1 ? 'flex' : 'none';
-    
-    if (stepNumber === 1) {
-        prevBtn.setAttribute('data-prev', '1');
-    } else if (stepNumber === 2) {
-        prevBtn.setAttribute('data-prev', '1');
-        nextBtn.setAttribute('data-next', '3');
-    } else if (stepNumber === 3) {
-        prevBtn.setAttribute('data-prev', '2');
-    }
+    if (step === 3) updateReview();
 
-    if (stepNumber === 3) {
-        nextBtn.style.display = 'none';
-        submitBtn.style.display = 'flex';
-        updateReview();
-    } else {
-        nextBtn.style.display = 'flex';
-        submitBtn.style.display = 'none';
-    }
-
-    currentStep = stepNumber;
-
-    // Scroll to top
+    currentStep = step;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ===== VALIDAÇÃO DO FORMULÁRIO =====
+
+// ===== VALIDAÇÃO (CORRIGIDA - PULA CAMPOS DESABILITADOS) =====
 function initializeFormValidation() {
     const submitBtn = document.querySelector('.btn-submit');
-    
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            if (validateForm()) {
-                submitForm();
-            }
-        });
-    }
+
+    submitBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (validateForm()) submitForm();
+    });
 }
 
+
 function validateCurrentStep() {
-    const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-    const requiredFields = currentStepElement.querySelectorAll('[required]');
-    let isValid = true;
-
-    requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-            isValid = false;
-            showFieldError(field, 'Este campo é obrigatório');
-        } else {
-            clearFieldError(field);
-        }
-    });
-
-    return isValid;
+    let valid = true;
+    
+    // Limpar erros anteriores primeiro
+    document.querySelector(`.form-step[data-step="${currentStep}"]`)
+        .querySelectorAll('.error-message')
+        .forEach(err => err.remove());
+    
+    document.querySelector(`.form-step[data-step="${currentStep}"]`)
+        .querySelectorAll('[required]')
+        .forEach(field => {
+            // ⚠️ IMPORTANTE: PULAR CAMPOS DESABILITADOS
+            if (field.disabled) {
+                console.log(`⏭️ Pulando campo desabilitado: ${field.id || field.name}`);
+                return;
+            }
+            
+            // Pegar valor do campo
+            const value = field.value || '';
+            
+            // Verificar se está vazio (ignora apenas espaços em branco)
+            if (value.trim() === '') {
+                valid = false;
+                showFieldError(field, 'Campo obrigatório');
+                console.log(`❌ Campo obrigatório vazio: ${field.id || field.name}`);
+            } else {
+                clearFieldError(field);
+                console.log(`✓ Campo válido: ${field.id || field.name}`);
+            }
+        });
+    
+    if (!valid) {
+        console.warn(`⚠️ Validação falhou no Step ${currentStep}`);
+    } else {
+        console.log(`✓ Step ${currentStep} validado com sucesso`);
+    }
+    
+    return valid;
 }
 
 function validateForm() {
-    // Validar todos os campos obrigatórios
-    const assunto = document.getElementById('assunto');
-    const area = document.getElementById('area');
-    const categoria = document.getElementById('categoria');
-    const prioridade = document.getElementById('prioridade');
-    const descricao = document.getElementById('descricao');
-
-    let isValid = true;
-
-    if (!assunto.value.trim()) {
-        showFieldError(assunto, 'O assunto é obrigatório');
-        isValid = false;
+    let ok = true;
+    
+    // Limpar todos os erros
+    document.querySelectorAll('.error-message').forEach(err => err.remove());
+    
+    ['assunto', 'area', 'categoria', 'prioridade', 'descricao'].forEach(id => {
+        const el = document.getElementById(id);
+        
+        // Pular se campo estiver desabilitado
+        if (el.disabled) {
+            console.log(`⏭️ Pulando campo desabilitado: ${id}`);
+            return;
+        }
+        
+        const value = el.value || '';
+        
+        if (value.trim() === '') {
+            showFieldError(el, 'Campo obrigatório');
+            ok = false;
+            console.log(`❌ Campo obrigatório vazio: ${id}`);
+        }
+    });
+    
+    if (!ok) {
+        console.warn('⚠️ Formulário possui campos obrigatórios vazios');
     }
-
-    if (!area.value) {
-        showFieldError(area, 'Selecione uma área');
-        isValid = false;
-    }
-
-    if (!categoria.value) {
-        showFieldError(categoria, 'Selecione uma categoria');
-        isValid = false;
-    }
-
-    if (!prioridade.value) {
-        showFieldError(prioridade, 'Selecione a prioridade');
-        isValid = false;
-    }
-
-    if (!descricao.value.trim()) {
-        showFieldError(descricao, 'A descrição é obrigatória');
-        isValid = false;
-    }
-
-    return isValid;
+    
+    return ok;
 }
 
-function showFieldError(field, message) {
+function showFieldError(field, msg) {
+    clearFieldError(field);
     field.style.borderColor = '#dc3545';
-    
-    // Remover erro anterior se existir
-    const existingError = field.parentElement.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-
-    // Adicionar nova mensagem de erro
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.style.color = '#dc3545';
-    errorDiv.style.fontSize = '0.85rem';
-    errorDiv.style.marginTop = '5px';
-    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    field.parentElement.appendChild(errorDiv);
+    const div = document.createElement('div');
+    div.className = 'error-message';
+    div.style.color = '#dc3545';
+    div.style.fontSize = '0.85rem';
+    div.style.marginTop = '5px';
+    div.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+    field.parentElement.appendChild(div);
 }
 
 function clearFieldError(field) {
-    field.style.borderColor = '#e9ecef';
-    const errorMessage = field.parentElement.querySelector('.error-message');
-    if (errorMessage) {
-        errorMessage.remove();
-    }
+    field.style.borderColor = '';
+    const err = field.parentElement.querySelector('.error-message');
+    if (err) err.remove();
 }
 
-// ===== UPLOAD DE ARQUIVOS =====
+
+// ===== UPLOAD =====
 function initializeFileUpload() {
-    const fileInput = document.getElementById('anexos');
-    const uploadArea = document.getElementById('fileUploadArea');
+    const input = document.getElementById('anexos');
+    if (!input) return;
 
-    if (!fileInput || !uploadArea) return;
-
-    // Click para selecionar arquivo
-    uploadArea.addEventListener('click', function(e) {
-        if (e.target.closest('.file-remove')) return;
-        fileInput.click();
-    });
-
-    // Seleção de arquivo
-    fileInput.addEventListener('change', function() {
-        handleFiles(this.files);
-    });
-
-    // Drag and Drop
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('drag-over');
-    });
-
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('drag-over');
-    });
-
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('drag-over');
-        handleFiles(e.dataTransfer.files);
+    input.addEventListener('change', () => {
+        uploadedFiles = Array.from(input.files);
+        console.log(`📎 ${uploadedFiles.length} arquivo(s) selecionado(s)`);
     });
 }
 
-function handleFiles(files) {
-    const fileList = document.getElementById('fileList');
-    const placeholder = document.querySelector('.upload-placeholder');
 
-    Array.from(files).forEach(file => {
-        // Validar tamanho (10MB)
-        if (file.size > 10 * 1024 * 1024) {
-            alert(`O arquivo "${file.name}" excede o tamanho máximo de 10MB`);
-            return;
-        }
-
-        // Adicionar à lista
-        uploadedFiles.push(file);
-
-        // Criar elemento visual
-        const fileItem = createFileItem(file);
-        fileList.appendChild(fileItem);
-    });
-
-    // Ocultar placeholder se houver arquivos
-    if (uploadedFiles.length > 0) {
-        placeholder.style.display = 'none';
-        fileList.style.display = 'block';
-    }
-}
-
-function createFileItem(file) {
-    const div = document.createElement('div');
-    div.className = 'file-item';
-
-    const icon = getFileIcon(file.name);
-    const size = formatFileSize(file.size);
-
-    div.innerHTML = `
-        <div class="file-info">
-            <div class="file-icon">
-                <i class="${icon}"></i>
-            </div>
-            <div class="file-details">
-                <div class="file-name">${file.name}</div>
-                <div class="file-size">${size}</div>
-            </div>
-        </div>
-        <button type="button" class="file-remove" onclick="removeFile('${file.name}')">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-
-    return div;
-}
-
-function getFileIcon(filename) {
-    const ext = filename.split('.').pop().toLowerCase();
-    const icons = {
-        'pdf': 'fas fa-file-pdf',
-        'doc': 'fas fa-file-word',
-        'docx': 'fas fa-file-word',
-        'xls': 'fas fa-file-excel',
-        'xlsx': 'fas fa-file-excel',
-        'txt': 'fas fa-file-alt',
-        'jpg': 'fas fa-file-image',
-        'jpeg': 'fas fa-file-image',
-        'png': 'fas fa-file-image',
-        'gif': 'fas fa-file-image'
-    };
-    return icons[ext] || 'fas fa-file';
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-}
-
-function removeFile(filename) {
-    // Remover do array
-    uploadedFiles = uploadedFiles.filter(f => f.name !== filename);
-
-    // Remover elemento visual
-    const fileList = document.getElementById('fileList');
-    const items = fileList.querySelectorAll('.file-item');
-    items.forEach(item => {
-        if (item.querySelector('.file-name').textContent === filename) {
-            item.remove();
-        }
-    });
-
-    // Mostrar placeholder se não houver mais arquivos
-    if (uploadedFiles.length === 0) {
-        const placeholder = document.querySelector('.upload-placeholder');
-        placeholder.style.display = 'block';
-        fileList.style.display = 'none';
-    }
-
-    // Atualizar input
-    const fileInput = document.getElementById('anexos');
-    const dt = new DataTransfer();
-    uploadedFiles.forEach(file => dt.items.add(file));
-    fileInput.files = dt.files;
-}
-
-// ===== CONTADOR DE CARACTERES =====
+// ===== CONTADOR =====
 function initializeCharCounter() {
     const textarea = document.getElementById('descricao');
     const counter = document.getElementById('charCount');
 
-    if (textarea && counter) {
-        textarea.addEventListener('input', function() {
-            const count = this.value.length;
-            counter.textContent = count;
+    if (!textarea || !counter) return;
 
-            // Alerta se exceder 2000
-            if (count > 2000) {
-                counter.style.color = '#dc3545';
-                this.value = this.value.substring(0, 2000);
-            } else {
-                counter.style.color = '#6c757d';
-            }
-        });
-    }
+    textarea.addEventListener('input', () => {
+        counter.textContent = textarea.value.length;
+    });
 }
 
-// ===== REVISÃO DO FORMULÁRIO =====
+
+// ===== REVISÃO =====
 function initializeFormReview() {
-    // Listeners para atualizar preview ao digitar
-    const formFields = ['assunto', 'area', 'categoria', 'prioridade', 'descricao'];
-    
-    formFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.addEventListener('change', updateReview);
-            field.addEventListener('input', updateReview);
-        }
+    ['assunto', 'area', 'categoria', 'prioridade', 'descricao'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        el.addEventListener('input', updateReview);
+        el.addEventListener('change', updateReview);
     });
 }
 
 function updateReview() {
-    // Assunto
-    const assunto = document.getElementById('assunto').value;
-    document.getElementById('review-assunto').textContent = assunto || '-';
+    const assuntoEl = document.getElementById('assunto');
+    const areaEl = document.getElementById('area');
+    const categoriaEl = document.getElementById('categoria');
+    const prioridadeEl = document.getElementById('prioridade');
+    const descricaoEl = document.getElementById('descricao');
 
-    // Área
-    const area = document.getElementById('area');
-    const areaText = area.options[area.selectedIndex]?.text || '-';
-    document.getElementById('review-area').textContent = areaText;
+    if (assuntoEl) {
+        document.getElementById('review-assunto').textContent = assuntoEl.value || '-';
+    }
 
-    // Categoria
-    const categoria = document.getElementById('categoria');
-    const categoriaText = categoria.options[categoria.selectedIndex]?.text || '-';
-    document.getElementById('review-categoria').textContent = categoriaText;
+    if (areaEl && areaEl.selectedOptions[0]) {
+        document.getElementById('review-area').textContent = areaEl.selectedOptions[0].text || '-';
+    }
 
-    // Prioridade
-    const prioridade = document.getElementById('prioridade');
-    const prioridadeText = prioridade.options[prioridade.selectedIndex]?.text || '-';
-    const reviewPrioridade = document.getElementById('review-prioridade');
-    reviewPrioridade.textContent = prioridadeText;
-    
-    // Cor da prioridade
-    const prioridadeValue = prioridade.value;
-    const cores = {
-        'baixa': '#28a745',
-        'media': '#ffc107',
-        'alta': '#ff9800',
-        'critica': '#dc3545'
-    };
-    reviewPrioridade.style.color = cores[prioridadeValue] || 'inherit';
-    reviewPrioridade.style.fontWeight = '700';
+    if (categoriaEl && categoriaEl.selectedOptions[0]) {
+        document.getElementById('review-categoria').textContent = categoriaEl.selectedOptions[0].text || '-';
+    }
 
-    // Descrição
-    const descricao = document.getElementById('descricao').value;
-    document.getElementById('review-descricao').textContent = descricao || '-';
+    if (prioridadeEl && prioridadeEl.selectedOptions[0]) {
+        document.getElementById('review-prioridade').textContent = prioridadeEl.selectedOptions[0].text || '-';
+    }
 
-    // Anexos
-    const anexosContainer = document.getElementById('review-anexos-container');
-    if (uploadedFiles.length > 0) {
-        anexosContainer.style.display = 'block';
-        const anexosList = uploadedFiles.map(f => `• ${f.name} (${formatFileSize(f.size)})`).join('\n');
-        document.getElementById('review-anexos').textContent = anexosList;
-    } else {
-        anexosContainer.style.display = 'none';
+    if (descricaoEl) {
+        document.getElementById('review-descricao').textContent = descricaoEl.value || '-';
     }
 }
 
-// ===== SUBMISSÃO DO FORMULÁRIO =====
+
+// ===== SUBMIT =====
 function submitForm() {
-    const form = document.getElementById('ticketForm');
-    const formData = new FormData(form);
+    const data = new FormData();
 
-    // Adicionar arquivos ao FormData
-    uploadedFiles.forEach(file => {
-        formData.append('anexos', file);
-    });
+    // 🔹 mapeamento FRONT → API
+    data.append('titulo', document.getElementById('assunto').value);
+    data.append('descricao', document.getElementById('descricao').value);
 
-    // Mostrar loading
-    showLoading();
+    // ⚠️ ESTES VALORES PRECISAM SER IDs DO BANCO
+    data.append('categoria', document.getElementById('categoria').value);
+    data.append('urgencia', document.getElementById('prioridade').value);
 
-    // AJAX para envio (configurar URL do Django)
-    fetch(form.action, {
+    // portal do cliente sempre cria incidente
+    data.append('tipo', 'incidente');
+
+    fetch('/api/tickets/', {
         method: 'POST',
-        body: formData,
+        body: data,
         headers: {
-            'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        hideLoading();
-        if (data.success) {
-            showSuccessModal(data.protocolo);
-        } else {
-            showError(data.message || 'Erro ao enviar o chamado. Tente novamente.');
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Erro ao criar ticket');
         }
+        return res.json();
     })
-    .catch(error => {
-        hideLoading();
-        showError('Erro ao enviar o chamado. Tente novamente.');
-        console.error('Erro:', error);
+    .then(ticket => {
+        console.log('Ticket criado:', ticket);
+        window.location.href = '/meus-chamados/';
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Erro ao enviar o chamado');
     });
 }
 
-function showLoading() {
-    const submitBtn = document.querySelector('.btn-submit');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-}
 
-function hideLoading() {
-    const submitBtn = document.querySelector('.btn-submit');
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Chamado';
-}
 
-function showSuccessModal(protocolo = null) {
-    // Gerar número de protocolo aleatório se não fornecido
-    const protocolNumber = protocolo || Math.floor(100000 + Math.random() * 900000);
-    
-    // Atualizar número do protocolo no modal
-    document.getElementById('protocolNumber').textContent = protocolNumber;
 
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('successModal'));
-    modal.show();
 
-    // Limpar formulário após 3 segundos
-    setTimeout(() => {
-        resetForm();
-    }, 3000);
-}
+// ===== BLOQUEAR SUBMIT NATIVO =====
+//document.getElementById('ticketForm')?.addEventListener('submit', e => {
+    //e.preventDefault();
+    //console.log('⚠️ Submit nativo bloqueado');
+//});//
 
-function showError(message) {
-    alert(message); // Substituir por um modal ou notificação mais elegante
-}
+document.addEventListener('click', function (e) {
+    const submitBtn = e.target.closest('.btn-submit');
 
-function resetForm() {
-    document.getElementById('ticketForm').reset();
-    uploadedFiles = [];
-    document.getElementById('fileList').innerHTML = '';
-    document.querySelector('.upload-placeholder').style.display = 'block';
-    document.getElementById('charCount').textContent = '0';
-    document.getElementById('categoria').disabled = true;
-    document.getElementById('categoria').innerHTML = '<option value="">Selecione a área primeiro</option>';
-    goToStep(1);
-}
+    if (submitBtn) {
+        e.preventDefault();
+        console.log('🖱️ CLIQUE NO BOTÃO ENVIAR DETECTADO');
 
-// ===== UTILITÁRIOS =====
-// Prevenir submit com Enter (exceto em textarea)
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-        const form = e.target.closest('form');
-        if (form && form.id === 'ticketForm') {
-            e.preventDefault();
+        if (validateForm()) {
+            submitForm();
+        } else {
+            console.warn('⚠️ Validação falhou');
         }
     }
 });
 
-console.log('✓ Abrir Chamado Cliente JS carregado com sucesso!');
+
+console.log('✓ JS carregado sem erros');
+
+

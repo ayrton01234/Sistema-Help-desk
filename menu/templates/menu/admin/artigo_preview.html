@@ -1,0 +1,37 @@
+{% extends 'template_citiesoft.html' %}
+
+{% block content %}
+
+<h1>{{ artigo.titulo }}</h1>
+
+{% if preview_admin %}
+<div style="
+    background:#fff3cd;
+    border:1px solid #ffeeba;
+    padding:12px;
+    margin-bottom:20px;
+    border-radius:6px;
+">
+    <strong>🔒 Pré-visualização administrativa</strong><br>
+    Este artigo está sendo visualizado no modo administrador.
+</div>
+
+<a href="{% url 'artigo_detalhe' artigo.slug %}"
+   class="btn-action btn-view"
+   target="_blank">
+    <i class="fas fa-eye"></i> Ver como cliente
+</a>
+
+<hr>
+{% endif %}
+
+<p><strong>Categoria:</strong> {{ artigo.categoria.nome }}</p>
+<p><strong>Status:</strong> {{ artigo.ativo|yesno:"Ativo,Inativo" }}</p>
+
+<hr>
+
+<div>
+    {{ artigo.conteudo|safe }}
+</div>
+
+{% endblock %}

@@ -24,6 +24,7 @@
     <script>
         // URLs do Django injetadas no JavaScript como objeto global
         window.DjangoURLs = {
+            // URLs do sistema principal
             citiesoft_home: '{% url "citiesoft_home" %}',
             abrir_chamado: '{% url "abrir_chamado" %}',
             cadastro_ativo: '{% url "cadastro_ativo" %}',
@@ -36,7 +37,13 @@
             atribuicao_tickets: '{% url "atribuicao_tickets" %}',
             autorizacao_usuarios: '{% url "autorizacao_usuarios" %}',
             admin_base_conhecimento: '{% url "admin_base_conhecimento" %}',
-        
+            cadastro_usuario: '{% url "cadastro_usuario" %}',
+            
+            // ⭐ URLs DO PORTAL DO CLIENTE (ADICIONADAS)
+            template_cliente: '{% url "citiesoft_home" %}',
+            abrir_chamado_cliente: '{% url "abrir_chamado" %}',
+            meus_chamados: '{% url "citiesoft_home" %}',
+            base_conhecimento: '{% url "admin_base_conhecimento" %}'
         };
         console.log('✅ URLs Django carregadas:', window.DjangoURLs);
     </script>

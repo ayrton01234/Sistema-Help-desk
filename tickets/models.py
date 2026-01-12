@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
+
 
 class CategoriaTicket(models.Model):
     nome = models.CharField(max_length=100)
@@ -50,10 +52,13 @@ class Ticket(models.Model):
     
     # Atribuição e responsáveis
     criado_por = models.ForeignKey(
-        'users.CustomUser',
-        on_delete=models.CASCADE,
-        related_name='tickets_criados'
-    )
+    settings.AUTH_USER_MODEL,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='tickets_suporte'  # no app tickets
+)
+
     atribuido_para = models.ForeignKey(
         'users.CustomUser',
         on_delete=models.SET_NULL,
@@ -88,6 +93,7 @@ class Ticket(models.Model):
         related_name='tickets_relacionados',
         verbose_name="Ativos Relacionados"
     )
+    
     
     class Meta:
         verbose_name = "Ticket"

@@ -1,0 +1,379 @@
+/* ===== CADASTRO DE USUÁRIO - CSS ===== */
+
+/* Seletor de Tipo */
+.type-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.type-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.type-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(25, 118, 210, 0.2);
+}
+
+.type-card.active {
+    border-color: #1976d2;
+    box-shadow: 0 8px 20px rgba(25, 118, 210, 0.3);
+}
+
+.type-card i {
+    font-size: 3rem;
+    color: #1976d2;
+    margin-bottom: 1rem;
+}
+
+.type-card h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.type-card p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Formulários */
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+    color: #1976d2;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    font-size: 1.2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group label .required {
+    color: #f44336;
+    margin-left: 4px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    color: #333;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #1976d2;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.form-control::placeholder {
+    color: #999;
+}
+
+select.form-control {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 20px;
+    background-color: #fafafa;
+    padding-right: 2.5rem;
+}
+
+.helper-text {
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Força da Senha */
+.password-strength {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: none;
+    font-weight: 500;
+}
+
+.password-strength.show {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-strength.weak {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.password-strength.medium {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.password-strength.strong {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Info Box */
+.info-box {
+    background: #e3f2fd;
+    border: 2px solid #90caf9;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+}
+
+.info-box i {
+    color: #1976d2;
+    margin-top: 2px;
+}
+
+.info-box p {
+    color: #0d47a1;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Botões */
+.form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.875rem 2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.btn i {
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background: #0d8ce8;
+    color: white;
+    box-shadow: none;
+}
+
+.btn-primary:hover {
+    background: #0a7cd6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(13, 140, 232, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Modo Escuro */
+body.dark .type-card {
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .type-card h3 {
+    color: var(--text-primary);
+}
+
+body.dark .type-card p {
+    color: var(--text-secondary);
+}
+
+body.dark .type-card.active {
+    background: rgba(25, 118, 210, 0.15);
+}
+
+body.dark .form-card {
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .form-group label {
+    color: var(--text-primary);
+}
+
+body.dark .form-control {
+    background: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark .form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+body.dark select.form-control {
+    background-color: var(--input-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+body.dark .helper-text {
+    color: var(--text-secondary);
+}
+
+body.dark .info-box {
+    background: rgba(25, 118, 210, 0.15);
+    border-color: rgba(25, 118, 210, 0.4);
+}
+
+body.dark .info-box p {
+    color: var(--text-secondary);
+}
+
+body.dark .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+body.dark .btn-secondary:hover {
+    background: #5a6268;
+}
+
+body.dark .password-strength.weak {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ff6b6b;
+}
+
+body.dark .password-strength.medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: #ffa726;
+}
+
+body.dark .password-strength.strong {
+    background: rgba(16, 185, 129, 0.2);
+    color: #66bb6a;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .type-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .type-card {
+        padding: 1.5rem;
+    }
+
+    .type-card i {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+    }
+}

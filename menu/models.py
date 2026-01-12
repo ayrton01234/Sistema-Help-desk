@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.conf import settings
 
 
+
 class Categoria(models.Model):
     """
     Categorias da Base de Conhecimento (ex: Locação, Suporte, Desenvolvimento)
