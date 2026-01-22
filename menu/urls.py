@@ -24,15 +24,13 @@ urlpatterns = [
     # ========== ADMIN: BASE DE CONHECIMENTO ==========
     path('admin/conhecimento/', views.admin_base_conhecimento, name='admin_base_conhecimento'),
     path('cadastro_usuario/', views.cadastro_usuario, name='cadastro_usuario'),
-    # APIs Admin
+    
+    # APIs Admin (Wiki)
     path('api/artigos/', views.api_artigos_list, name='api_artigos_list'),
     path('api/artigos/create/', views.api_artigo_save, name='api_artigo_create'),
     path('api/artigos/<int:artigo_id>/update/', views.api_artigo_save, name='api_artigo_update'),
     path('api/artigos/<int:artigo_id>/delete/', views.api_artigo_delete, name='api_artigo_delete'),
-    path('api/conhecimento/artigos/<slug:slug>/rate/',views.avaliar_artigo,name='api_avaliacao'),
-    path('admin/conhecimento/artigo/<slug:slug>/preview/',views.artigo_preview_admin, name='artigo_preview_admin'),
-    
-
+    path('admin/conhecimento/artigo/<slug:slug>/preview/', views.artigo_preview_admin, name='artigo_preview_admin'),
     
     # ========== PÚBLICO: BASE DE CONHECIMENTO (CLIENTES) ==========
     path('conhecimento/', views.base_conhecimento, name='base_conhecimento'),
@@ -40,8 +38,21 @@ urlpatterns = [
     path('conhecimento/artigo/<slug:slug>/', views.artigo_detalhe, name='artigo_detalhe'),
     path('conhecimento/busca/', views.busca_resultados, name='busca_resultados'),
     
-    # APIs Públicas (Rastreamento)
+    # APIs Públicas (Wiki)
     path('api/conhecimento/artigos/<slug:slug>/view/', views.registrar_visualizacao, name='api_visualizacao'),
     path('api/conhecimento/artigos/<slug:slug>/rate/', views.avaliar_artigo, name='api_avaliacao'),
     path('api/conhecimento/busca/', views.api_busca, name='api_busca'),
+
+    # ========== API SISTEMA DE TICKETS (INTEGRAÇÃO JS) ==========
+    # Rota que o JS usa para carregar os cards (GET)
+    path('api/tickets/', views.api_get_tickets, name='api_tickets'),
+    
+    # Rota que o JS usa para salvar o técnico (POST)
+    path('api/atribuir/', views.api_atribuir_ticket, name='api_atribuir_ticket'),
+    
+    # Rota para o botão de Chat/Dúvidas
+    path('chamados/chat/<int:ticket_id>/', views.chamado_detalhe, name='chat_chamado'),
+    path('chamado/<int:ticket_id>/', views.chamado_detalhe, name='chamado_detalhe'),
+    # Adicione esta linha junto com as outras views de cliente
+    path('meus_tickets/', views.meus_tickets, name='meus_tickets'),
 ]

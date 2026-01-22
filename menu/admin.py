@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Categoria, Artigo, AvaliacaoArtigo
+from .models import Categoria, Artigo, AvaliacaoArtigo, Chamado, Mensagem
 
+# ==========================================
+# ADMIN: BASE DE CONHECIMENTO 📚
+# ==========================================
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
-    """
-    Administração de Categorias da Base de Conhecimento
-    """
     list_display = ('nome', 'slug', 'ordem', 'ativo', 'total_artigos_count', 'criado_em')
     list_filter = ('ativo', 'criado_em')
     search_fields = ('nome', 'descricao')
@@ -15,39 +15,19 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_editable = ('ordem', 'ativo')
     
     fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('nome', 'slug', 'descricao')
-        }),
-        ('Aparência', {
-            'fields': ('icone', 'cor_gradiente')
-        }),
-        ('Configurações', {
-            'fields': ('ordem', 'ativo')
-        }),
+        ('Informações Básicas', {'fields': ('nome', 'slug', 'descricao')}),
+        ('Aparência', {'fields': ('icone', 'cor_gradiente')}),
+        ('Configurações', {'fields': ('ordem', 'ativo')}),
     )
     
     def total_artigos_count(self, obj):
-        """Exibe total de artigos ativos"""
         return obj.total_artigos
     total_artigos_count.short_description = 'Artigos Ativos'
 
 
 @admin.register(Artigo)
 class ArtigoAdmin(admin.ModelAdmin):
-    """
-    Administração de Artigos da Base de Conhecimento
-    """
-    list_display = (
-        'titulo', 
-        'categoria', 
-        'tipo', 
-        'autor', 
-        'visualizacoes', 
-        'taxa_aprovacao_display',
-        'ativo', 
-        'destaque',
-        'data_publicacao'
-    )
+    list_display = ('titulo', 'categoria', 'tipo', 'autor', 'visualizacoes', 'ativo', 'destaque', 'data_publicacao')
     list_filter = ('ativo', 'destaque', 'tipo', 'categoria', 'data_publicacao')
     search_fields = ('titulo', 'resumo', 'conteudo', 'tags')
     prepopulated_fields = {'slug': ('titulo',)}
@@ -57,62 +37,60 @@ class ArtigoAdmin(admin.ModelAdmin):
     date_hierarchy = 'data_publicacao'
     
     fieldsets = (
-        ('Informações Básicas', {
-            'fields': ('titulo', 'slug', 'resumo')
-        }),
-        ('Conteúdo', {
-            'fields': ('conteudo',),
-            'description': 'Use HTML para formatar o conteúdo'
-        }),
-        ('Classificação', {
-            'fields': ('categoria', 'tipo', 'tags')
-        }),
-        ('Metadados', {
-            'fields': ('autor', 'tempo_leitura')
-        }),
-        ('Estatísticas', {
-            'fields': ('visualizacoes', 'avaliacoes_positivas', 'avaliacoes_negativas'),
-            'classes': ('collapse',)
-        }),
-        ('Status', {
-            'fields': ('ativo', 'destaque', 'data_publicacao', 'atualizado_em')
-        }),
+        ('Informações Básicas', {'fields': ('titulo', 'slug', 'resumo')}),
+        ('Conteúdo', {'fields': ('conteudo',)}),
+        ('Classificação', {'fields': ('categoria', 'tipo', 'tags')}),
+        ('Metadados', {'fields': ('autor', 'tempo_leitura')}),
+        ('Status', {'fields': ('ativo', 'destaque', 'data_publicacao', 'atualizado_em')}),
     )
     
     def save_model(self, request, obj, form, change):
-        """Auto-preenche o autor com o usuário logado"""
-        if not obj.pk:  # Se for novo
+        if not obj.pk:
             obj.autor = request.user
         super().save_model(request, obj, form, change)
-    
-    def taxa_aprovacao_display(self, obj):
-        """Exibe taxa de aprovação em %"""
-        return f"{obj.taxa_aprovacao}%"
-    taxa_aprovacao_display.short_description = 'Aprovação'
 
 
 @admin.register(AvaliacaoArtigo)
 class AvaliacaoArtigoAdmin(admin.ModelAdmin):
-    """
-    Administração de Avaliações dos Artigos
-    """
     list_display = ('artigo', 'usuario', 'util', 'comentario_preview', 'criado_em')
     list_filter = ('util', 'criado_em')
     search_fields = ('artigo__titulo', 'usuario__username', 'comentario')
     readonly_fields = ('artigo', 'usuario', 'session_key', 'util', 'comentario', 'criado_em')
-    ordering = ('-criado_em',)
     
     def comentario_preview(self, obj):
-        """Exibe preview do comentário"""
         if obj.comentario:
             return obj.comentario[:50] + '...' if len(obj.comentario) > 50 else obj.comentario
         return '-'
     comentario_preview.short_description = 'Comentário'
-    
-    def has_add_permission(self, request):
-        """Desabilita criação manual de avaliações"""
-        return False
-    
-    def has_change_permission(self, request, obj=None):
-        """Desabilita edição de avaliações"""
-        return False
+
+
+# ==========================================
+# ADMIN: SISTEMA DE CHAMADOS E CHAT 🎫
+# ==========================================
+
+@admin.register(Chamado)
+class ChamadoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'titulo', 'cliente', 'prioridade', 'status', 'tecnico', 'criado_em')
+    list_filter = ('status', 'prioridade', 'tecnico')
+    search_fields = ('titulo', 'cliente', 'id')
+    ordering = ('-criado_em',)
+    list_editable = ('status', 'prioridade', 'tecnico') 
+
+    fieldsets = (
+        ('Informações do Chamado', {
+            'fields': ('titulo', 'cliente', 'descricao')
+        }),
+        ('Gerenciamento', {
+            'fields': ('prioridade', 'status', 'tecnico')
+        }),
+    )
+
+@admin.register(Mensagem)
+class MensagemAdmin(admin.ModelAdmin):
+    list_display = ('chamado', 'remetente', 'texto_preview', 'data_envio', 'is_suporte')
+    list_filter = ('data_envio', 'is_suporte')
+    readonly_fields = ('data_envio',)
+
+    def texto_preview(self, obj):
+        return obj.texto[:50] + "..." if len(obj.texto) > 50 else obj.texto
+    texto_preview.short_description = 'Mensagem'

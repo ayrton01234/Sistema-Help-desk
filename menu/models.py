@@ -2,23 +2,18 @@ from django.db import models
 from django.utils.text import slugify
 from django.conf import settings
 
-
+# ==========================================
+# SEÇÃO 1: BASE DE CONHECIMENTO
+# ==========================================
 
 class Categoria(models.Model):
-    """
-    Categorias da Base de Conhecimento (ex: Locação, Suporte, Desenvolvimento)
-    """
     nome = models.CharField(max_length=100, verbose_name='Nome da Categoria')
-    slug = models.SlugField(max_length=100, unique=True, blank=True, db_index=True)  # ← Índice para performance
+    slug = models.SlugField(max_length=100, unique=True, blank=True, db_index=True)
     descricao = models.TextField(verbose_name='Descrição')
     icone = models.CharField(max_length=50, default='fas fa-folder', verbose_name='Ícone FontAwesome')
-    cor_gradiente = models.CharField(
-        max_length=100, 
-        default='linear-gradient(135deg, #00A6FF, #0056b3)', 
-        verbose_name='Cor Gradiente CSS'
-    )
-    ordem = models.IntegerField(default=0, verbose_name='Ordem de Exibição', db_index=True)  # ← Índice
-    ativo = models.BooleanField(default=True, verbose_name='Ativo', db_index=True)  # ← Índice
+    cor_gradiente = models.CharField(max_length=100, default='linear-gradient(135deg, #00A6FF, #0056b3)', verbose_name='Cor Gradiente CSS')
+    ordem = models.IntegerField(default=0, verbose_name='Ordem de Exibição', db_index=True)
+    ativo = models.BooleanField(default=True, verbose_name='Ativo', db_index=True)
     criado_em = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
     atualizado_em = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
 
@@ -26,7 +21,7 @@ class Categoria(models.Model):
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
         ordering = ['ordem', 'nome']
-        db_table = 'menu_categoria'  # ← Nome da tabela no MySQL
+        db_table = 'menu_categoria'
 
     def __str__(self):
         return self.nome
@@ -38,79 +33,33 @@ class Categoria(models.Model):
 
     @property
     def total_artigos(self):
-        """Total de artigos ativos nesta categoria"""
         return self.artigos.filter(ativo=True).count()
 
 
 class Artigo(models.Model):
-    """
-    Artigos da Base de Conhecimento
-    """
-    TIPO_CHOICES = [
-        ('tutorial', 'Tutorial'),
-        ('guia', 'Guia'),
-        ('faq', 'FAQ'),
-    ]
-
-    # Informações Básicas
-    titulo = models.CharField(max_length=200, verbose_name='Título', db_index=True)  # ← Índice
-    slug = models.SlugField(max_length=200, unique=True, blank=True, db_index=True)  # ← Índice
+    TIPO_CHOICES = [('tutorial', 'Tutorial'), ('guia', 'Guia'), ('faq', 'FAQ')]
+    titulo = models.CharField(max_length=200, verbose_name='Título', db_index=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True, db_index=True)
     resumo = models.TextField(max_length=500, verbose_name='Resumo')
-    conteudo = models.TextField(verbose_name='Conteúdo HTML')  # ← LONGTEXT no MySQL
-    
-    # Classificação
-    categoria = models.ForeignKey(
-        Categoria, 
-        on_delete=models.CASCADE, 
-        related_name='artigos', 
-        verbose_name='Categoria',
-        db_index=True  # ← Índice para JOIN
-    )
-    tipo = models.CharField(
-        max_length=20, 
-        choices=TIPO_CHOICES, 
-        default='tutorial', 
-        verbose_name='Tipo',
-        db_index=True  # ← Índice
-    )
+    conteudo = models.TextField(verbose_name='Conteúdo HTML')
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='artigos', verbose_name='Categoria')
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='tutorial', verbose_name='Tipo')
     tags = models.CharField(max_length=500, blank=True, verbose_name='Tags (separadas por vírgula)')
-    
-    # Metadados
-    autor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
-        verbose_name='Autor'
-    )
-    tempo_leitura = models.PositiveIntegerField(default=5, verbose_name='Tempo de Leitura (min)')  # ← Não pode ser negativo
-    visualizacoes = models.PositiveIntegerField(default=0, verbose_name='Visualizações', db_index=True)  # ← Índice
-    
-    # Avaliações
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    tempo_leitura = models.PositiveIntegerField(default=5, verbose_name='Tempo de Leitura (min)')
+    visualizacoes = models.PositiveIntegerField(default=0, verbose_name='Visualizações', db_index=True)
     avaliacoes_positivas = models.PositiveIntegerField(default=0, verbose_name='Avaliações Positivas')
     avaliacoes_negativas = models.PositiveIntegerField(default=0, verbose_name='Avaliações Negativas')
-    
-    # Status
-    ativo = models.BooleanField(default=True, verbose_name='Ativo', db_index=True)  # ← Índice
-    destaque = models.BooleanField(default=False, verbose_name='Destaque', db_index=True)  # ← Índice
-    
-    # Datas
-    data_publicacao = models.DateTimeField(
-        auto_now_add=True, 
-        verbose_name='Data de Publicação',
-        db_index=True  # ← Índice para ordenação
-    )
-    atualizado_em = models.DateTimeField(auto_now=True, verbose_name='Atualizado em')
+    ativo = models.BooleanField(default=True, verbose_name='Ativo')
+    destaque = models.BooleanField(default=False, verbose_name='Destaque')
+    data_publicacao = models.DateTimeField(auto_now_add=True, db_index=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Artigo'
         verbose_name_plural = 'Artigos'
         ordering = ['-data_publicacao']
-        db_table = 'menu_artigo'  # ← Nome da tabela no MySQL
-        indexes = [
-            models.Index(fields=['ativo', 'destaque']),  # ← Índice composto
-            models.Index(fields=['categoria', 'ativo']),  # ← Índice composto
-        ]
+        db_table = 'menu_artigo'
 
     def __str__(self):
         return self.titulo
@@ -120,74 +69,80 @@ class Artigo(models.Model):
             base_slug = slugify(self.titulo)
             slug = base_slug
             counter = 1
-            # Garantir slug único
             while Artigo.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
 
-    @property
-    def avaliacao(self):
-        """Calcula a avaliação média (0-5)"""
-        total = self.avaliacoes_positivas + self.avaliacoes_negativas
-        if total == 0:
-            return 0
-        return round((self.avaliacoes_positivas / total) * 5, 1)
-
-    @property
-    def taxa_aprovacao(self):
-        """Calcula a taxa de aprovação em porcentagem"""
-        total = self.avaliacoes_positivas + self.avaliacoes_negativas
-        if total == 0:
-            return 0
-        return round((self.avaliacoes_positivas / total) * 100)
-
-    def get_tags_list(self):
-        """Retorna lista de tags"""
-        if self.tags:
-            return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
-        return []
-
-    def incrementar_visualizacao(self):
-        """Incrementa contador de visualizações de forma atômica"""
-        self.visualizacoes = models.F('visualizacoes') + 1
-        self.save(update_fields=['visualizacoes'])
-
 
 class AvaliacaoArtigo(models.Model):
-    """
-    Registra avaliações individuais dos usuários nos artigos
-    """
-    artigo = models.ForeignKey(
-        Artigo, 
-        on_delete=models.CASCADE, 
-        related_name='avaliacoes_detalhadas', 
-        verbose_name='Artigo'
-    )
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        null=True, 
-        blank=True, 
-        verbose_name='Usuário'
-    )
-    session_key = models.CharField(max_length=100, blank=True, verbose_name='Session Key')
+    artigo = models.ForeignKey(Artigo, on_delete=models.CASCADE, related_name='avaliacoes_detalhadas')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    session_key = models.CharField(max_length=100, blank=True)
     util = models.BooleanField(verbose_name='Foi Útil?')
-    comentario = models.TextField(blank=True, verbose_name='Comentário (opcional)')
-    criado_em = models.DateTimeField(auto_now_add=True, verbose_name='Criado em', db_index=True)
+    comentario = models.TextField(blank=True, verbose_name='Comentário')
+    criado_em = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        verbose_name = 'Avaliação de Artigo'
-        verbose_name_plural = 'Avaliações de Artigos'
-        ordering = ['-criado_em']
         db_table = 'menu_avaliacao_artigo'
-        unique_together = [['artigo', 'usuario'], ['artigo', 'session_key']]  # ← Evita avaliação duplicada
+        unique_together = [['artigo', 'usuario'], ['artigo', 'session_key']]
+
+# ==========================================
+# SEÇÃO 2: SISTEMA DE TICKETS E CHAT
+# ==========================================
+
+class Chamado(models.Model):
+    PRIORIDADE_CHOICES = [('baixo', '🟢 Baixa'), ('medio', '🟡 Média'), ('alto', '🔴 Alta')]
+    STATUS_CHOICES = [('aberto', 'Aberto'), ('em_progresso', 'Em Andamento'), ('aguardando', 'Aguardando'), ('fechado', 'Concluído')]
+
+    titulo = models.CharField(max_length=200, verbose_name='Título do Chamado')
+    cliente = models.CharField(max_length=150, verbose_name='Nome do Cliente/Prefeitura')
+    descricao = models.TextField(verbose_name='Descrição do Problema')
+    prioridade = models.CharField(max_length=10, choices=PRIORIDADE_CHOICES, default='medio')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='aberto', db_index=True)
+    
+    # CORREÇÃO: Adicionado o campo criado_por para vincular o chamado ao cliente
+    criado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='meus_chamados_menu',
+        verbose_name='Criado por'
+    )
+    
+    tecnico = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='chamados_atribuidos_menu', 
+        verbose_name='Técnico Responsável'
+    )
+    
+    criado_em = models.DateTimeField(auto_now_add=True, db_index=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Chamado'
+        verbose_name_plural = 'Chamados'
+        db_table = 'menu_chamado'
 
     def __str__(self):
-        return f"Avaliação de '{self.artigo.titulo}' - {'Útil' if self.util else 'Não Útil'}"
-    
-    # formulario cliente
-    
-    
-    
+        return f"#{self.id} - {self.titulo}"
+
+class Mensagem(models.Model):
+    chamado = models.ForeignKey(Chamado, on_delete=models.CASCADE, related_name='mensagens', verbose_name='Chamado')
+    remetente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='Remetente')
+    texto = models.TextField(verbose_name='Mensagem')
+    arquivo = models.FileField(upload_to='chamados/anexos/', null=True, blank=True, verbose_name='Arquivo Anexo')
+    data_envio = models.DateTimeField(auto_now_add=True, verbose_name='Data de Envio', db_index=True)
+    is_suporte = models.BooleanField(default=False, verbose_name='É Suporte?')
+
+    class Meta:
+        verbose_name = 'Mensagem'
+        verbose_name_plural = 'Mensagens'
+        db_table = 'menu_mensagem'
+        ordering = ['data_envio']
+
+    def __str__(self):
+        return f"Mensagem de {self.remetente} no Chamado #{self.chamado_id}"

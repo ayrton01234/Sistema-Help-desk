@@ -1,0 +1,9 @@
+{% extends 'template_citiesoft.html' %}
+{% block content %}
+<div style="text-align: center; padding: 50px;">
+    <i class="fas fa-comments" style="font-size: 5rem; color: #ccc;"></i>
+    <h2 style="margin-top: 20px;">Chat do Chamado #{{ chamado.id }}</h2>
+    <p>O sistema de chat está sendo preparado para este chamado: <strong>{{ chamado.titulo }}</strong></p>
+    <a href="{% url 'atribuicao_tickets' %}" class="btn btn-primary">Voltar para Atribuição</a>
+</div>
+{% endblock %}

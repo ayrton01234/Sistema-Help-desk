@@ -1,0 +1,147 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block title %}Chamado #{{ ticket.id }} - Citiesoft{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'menu/css/chamado_detalhe.css' %}">
+{% endblock %}
+
+{% block page_header %}
+    <h1><i class="fas fa-ticket-alt"></i> Chamado #{{ ticket.id }}</h1>
+    <p class="text-muted">Acompanhe o andamento do atendimento</p>
+{% endblock %}
+
+{% block content %}
+<div class="ticket-container">
+    <div class="ticket-header mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <h2>{{ ticket.titulo }}</h2>
+            <a href="{% url 'meus_tickets' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+        <p class="mt-2">Status: 
+            <span class="badge {% if ticket.status == 'aberto' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                {{ ticket.get_status_display }}
+            </span>
+        </p>
+    </div>
+
+    <div class="ticket-info">
+        <div><span><i class="fas fa-building"></i> Cliente/Prefeitura:</span> {{ ticket.cliente }}</div>
+        <div><span><i class="fas fa-exclamation-triangle"></i> Prioridade:</span> {{ ticket.get_prioridade_display }}</div>
+        <div><span><i class="fas fa-calendar-alt"></i> Abertura:</span> {{ ticket.criado_em|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <div class="ticket-chat" id="chatWindow">
+        {% for msg in mensagens %}
+        <div class="chat-message {% if msg.remetente == request.user %}user{% else %}support{% endif %}">
+            <div class="chat-header">
+                <strong>{{ msg.remetente.get_full_name|default:msg.remetente.username }}</strong>
+                <span>{{ msg.data_envio|date:"H:i" }}</span>
+            </div>
+            <div class="chat-body">
+                {{ msg.texto|linebreaksbr }}
+            </div>
+            {% if msg.arquivo %}
+            <div class="mt-2">
+                <a href="{{ msg.arquivo.url }}" target="_blank" class="badge bg-light text-dark text-decoration-none p-2">
+                    <i class="fas fa-paperclip"></i> Ver anexo
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-comments fa-3x mb-3"></i>
+            <p>Nenhuma mensagem registrada ainda.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <form class="chat-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="chat-form-actions mb-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-paperclip"></i> Anexar Arquivo
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-info" onclick="toggleDetalhes()">
+                <i class="fas fa-info-circle"></i> Ver Detalhes
+            </button>
+        </div>
+
+        <input type="file" name="arquivo" id="fileInput" style="display: none;" onchange="mostrarPreview(this)">
+        <div id="filePreview" class="mb-2"></div>
+
+        <textarea name="mensagemTexto" id="mensagemTexto" class="form-control" placeholder="Digite sua resposta aqui..." required></textarea>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <small class="text-muted"><i class="fas fa-keyboard"></i> Use <strong>Shift+Enter</strong> para quebrar linha</small>
+            <button type="submit" class="btn btn-primary px-4">
+                Enviar Resposta <i class="fas fa-paper-plane ms-2"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div id="modalDetalhes" class="modal-detalhes" style="display: none;">
+    <div class="modal-content-detalhes shadow-lg">
+        <div class="modal-header-detalhes d-flex justify-content-between align-items-center mb-3">
+            <h3 class="m-0"><i class="fas fa-file-alt text-primary"></i> Dados Completos</h3>
+            <button type="button" onclick="toggleDetalhes()" class="btn-close"></button>
+        </div>
+        <div class="detalhes-grid">
+            <div class="mb-3">
+                <strong>Descrição Original:</strong>
+                <p class="bg-light p-2 rounded">{{ ticket.descricao }}</p>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <strong>Técnico:</strong>
+                    <p>{{ ticket.tecnico.get_full_name|default:"Aguardando Atribuição" }}</p>
+                </div>
+                <div class="col-6">
+                    <strong>Última Atualização:</strong>
+                    <p>{{ ticket.atualizado_em|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-end mt-4">
+            <button type="button" onclick="toggleDetalhes()" class="btn btn-secondary">Fechar</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDetalhes() {
+        const modal = document.getElementById('modalDetalhes');
+        modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    window.onload = function() {
+        const chatWindow = document.getElementById('chatWindow');
+        if(chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight;
+    };
+
+    function mostrarPreview(input) {
+        const preview = document.getElementById('filePreview');
+        if (input.files && input.files[0]) {
+            preview.innerHTML = `<span class="badge bg-secondary p-2"><i class="fas fa-file me-1"></i> ${input.files[0].name}</span>`;
+        }
+    }
+
+    const textarea = document.getElementById('mensagemTexto');
+    if(textarea) {
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.form.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

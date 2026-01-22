@@ -4,6 +4,8 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from users.views import CustomTokenView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 # Import das views
@@ -47,3 +49,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/', include('faq.urls')),
 ]
+
+# Agora somamos a rota de mídia apenas se estivermos em modo de desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

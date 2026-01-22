@@ -1,0 +1,96 @@
+{% extends "template_citiesoft.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white shadow-sm p-3 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Total</span>
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <h2 class="mb-0 fw-bold">{{ tickets|length }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark shadow-sm p-3 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Abertos</span>
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h2 class="mb-0 fw-bold">{{ abertos_count }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white shadow-sm p-3 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Em Andamento</span>
+                <i class="fas fa-sync fa-spin"></i>
+            </div>
+            <h2 class="mb-0 fw-bold">{{ em_andamento_count }}</h2>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white shadow-sm p-3 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Fechados</span>
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="mb-0 fw-bold">{{ fechados_count }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-3">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-list me-2"></i>Meus Chamados</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if tickets %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Assunto</th>
+                        <th>Abertura</th>
+                        <th>Status</th>
+                        <th class="text-center">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-muted">#{{ ticket.id }}</td>
+                        <td><div class="fw-semibold text-dark">{{ ticket.titulo }}</div></td>
+                        <td class="small">{{ ticket.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if ticket.status == 'aberto' %}
+                                <span class="badge rounded-pill bg-warning text-dark px-3">Aberto</span>
+                            {% elif ticket.status == 'em_progresso' %}
+                                <span class="badge rounded-pill bg-primary px-3">Em Andamento</span>
+                            {% elif ticket.status == 'fechado' %}
+                                <span class="badge rounded-pill bg-success px-3">Concluído</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-secondary px-3">{{ ticket.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center px-4">
+                            <a href="{% url 'chamado_detalhe' ticket.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                <i class="fas fa-eye"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-3x text-light mb-3"></i>
+            <p class="text-muted">Nenhum chamado encontrado.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

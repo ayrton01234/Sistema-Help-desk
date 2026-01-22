@@ -5,6 +5,27 @@
 
 {% block extra_css %}
 <link href="{% static 'menu/css/atribuicao_tickets.css' %}" rel="stylesheet">
+<style>
+    /* Ajuste para o novo botão de Chat */
+    .btn-chat {
+        background-color: #28a745 !important;
+        color: white !important;
+        border: none !important;
+    }
+    .btn-chat:hover {
+        background-color: #218838 !important;
+        transform: translateY(-2px);
+    }
+    .ticket-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    /* Faz o botão de histórico ou atribuir ocupar a linha toda se necessário */
+    .btn-full {
+        grid-column: span 2;
+    }
+</style>
 {% endblock %}
 
 {% block page_header %}
@@ -19,7 +40,8 @@
 {% endblock %}
 
 {% block content %}
-<!-- STATS CARDS -->
+<form id="csrf-form">{% csrf_token %}</form>
+
 <div class="stats-grid">
     <div class="stat-card stat-total">
         <div class="stat-icon"><i class="fas fa-ticket-alt"></i></div>
@@ -58,12 +80,11 @@
     </div>
 </div>
 
-<!-- FILTROS -->
 <div class="filters-section">
     <div class="filters-header">
         <h2><i class="fas fa-filter"></i> Filtros e Busca</h2>
         <div class="filters-actions">
-            <button class="btn-action btn-refresh" id="btnRefresh">
+            <button class="btn-action btn-refresh" id="btnRefresh" onclick="TicketManager.loadTickets()">
                 <i class="fas fa-sync-alt"></i> Atualizar
             </button>
             <button class="btn-action btn-clear" id="btnClearFilters">
@@ -74,7 +95,7 @@
     <div class="filters-grid">
         <div class="filter-group">
             <label class="filter-label"><i class="fas fa-info-circle"></i> Status</label>
-            <select class="filter-select" id="filterStatus">
+            <select class="filter-select" id="filterStatus" onchange="FilterManager.updateFilters()">
                 <option value="">Todos os Status</option>
                 <option value="aberto">🔴 Aberto</option>
                 <option value="em_progresso">🟡 Em Andamento</option>
@@ -84,7 +105,7 @@
         </div>
         <div class="filter-group">
             <label class="filter-label"><i class="fas fa-exclamation-triangle"></i> Prioridade</label>
-            <select class="filter-select" id="filterPriority">
+            <select class="filter-select" id="filterPriority" onchange="FilterManager.updateFilters()">
                 <option value="">Todas as Prioridades</option>
                 <option value="alto">🔴 Alta</option>
                 <option value="medio">🟡 Média</option>
@@ -93,28 +114,25 @@
         </div>
         <div class="filter-group">
             <label class="filter-label"><i class="fas fa-user-tie"></i> Técnico</label>
-            <select class="filter-select" id="filterTechnician">
+            <select class="filter-select" id="filterTechnician" onchange="FilterManager.updateFilters()">
                 <option value="">Todos os Técnicos</option>
                 <option value="nao_atribuido">⚪ Não Atribuído</option>
             </select>
         </div>
         <div class="filter-group">
             <label class="filter-label"><i class="fas fa-search"></i> Pesquisar</label>
-            <input type="text" class="filter-input" id="searchInput" placeholder="ID, título, cliente...">
+            <input type="text" class="filter-input" id="searchInput" placeholder="ID, título, cliente..." oninput="FilterManager.updateFilters()">
         </div>
     </div>
 </div>
 
-<!-- LOADING -->
 <div id="loadingState" class="loading-state" style="display: none;">
     <div class="loading-spinner"></div>
     <p>Carregando tickets...</p>
 </div>
 
-<!-- TICKETS -->
 <div class="tickets-grid" id="ticketsGrid"></div>
 
-<!-- MODAL ATRIBUIÇÃO -->
 <div class="modal fade" id="attributionModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -124,8 +142,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="attributionForm" novalidate>
-                {% csrf_token %}
+            <form id="attributionForm" novalidate onsubmit="TicketManager.confirmAttribution(event)">
                 <div class="modal-body">
                     <div class="ticket-info-box">
                         <div class="info-row">
@@ -153,9 +170,9 @@
                             <i class="fas fa-layer-group"></i> Escalonamento
                         </label>
                         <select class="form-select-modal" id="modalEscalation">
-                            <option value="n1">Nível 1</option>
-                            <option value="n2">Nível 2</option>
-                            <option value="n3">Nível 3</option>
+                            <option value="n1">Nível 1 - Suporte Básico</option>
+                            <option value="n2">Nível 2 - Suporte Avançado</option>
+                            <option value="n3">Nível 3 - Especialista</option>
                         </select>
                     </div>
                     <div class="form-group-modal">
@@ -171,7 +188,7 @@
                         <i class="fas fa-times"></i> Cancelar
                     </button>
                     <button type="submit" class="btn-modal btn-confirm">
-                        <i class="fas fa-check"></i> Confirmar
+                        <i class="fas fa-check"></i> Confirmar Atribuição
                     </button>
                 </div>
             </form>
@@ -179,7 +196,6 @@
     </div>
 </div>
 
-<!-- MODAL HISTÓRICO -->
 <div class="modal fade" id="historyModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -203,17 +219,36 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Script de Configuração do Usuário -->
 <script>
-    // Dados do usuário atual vindos do Django
+    // 1. Configuração do Usuário vinda do Django
     window.CURRENT_USER = {
         id: '{{ user.username }}',
         name: '{{ user.get_full_name|default:user.username }}',
         role: {% if user.is_superuser or user.is_staff %}'admin'{% else %}'technician'{% endif %}
     };
-    console.log('✓ Usuário atual:', window.CURRENT_USER);
+
+    // 2. Data Atual
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pt-BR', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+
+    // 3. Contador de Caracteres do Modal
+    const obsTextarea = document.getElementById('modalObservations');
+    if (obsTextarea) {
+        obsTextarea.addEventListener('input', function() {
+            document.getElementById('charCount').textContent = this.value.length;
+        });
+    }
 </script>
 
-<!-- JavaScript da Aplicação -->
 <script src="{% static 'menu/js/atribuicao_tickets.js' %}"></script>
+
+<script>
+    // Inicialização da UI após carregar o script
+    document.addEventListener('DOMContentLoaded', () => {
+        UI.updateUserInfo();
+        UI.loadTechnicians();
+        TicketManager.loadTickets();
+    });
+</script>
 {% endblock %}

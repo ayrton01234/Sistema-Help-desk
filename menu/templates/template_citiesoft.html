@@ -7,24 +7,17 @@
     <title>{% block title %}Página - Citiesoft{% endblock %}</title>
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'menu/img/favico.ico' %}">
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- CSS Base (obrigatório em todas as telas) -->
     <link href="{% static 'menu/css/template_citiesoft.css' %}" rel="stylesheet">
     
-    <!-- CSS Específico da Página (opcional) -->
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- 🔴 SCRIPT COM URLs DO DJANGO - LOGO APÓS <body> -->
-    <!-- Este script DEVE estar ANTES de qualquer outro JS -->
     <script>
-        // URLs do Django injetadas no JavaScript como objeto global
+        // URLs do Django
         window.DjangoURLs = {
-            // URLs do sistema principal
             citiesoft_home: '{% url "citiesoft_home" %}',
             abrir_chamado: '{% url "abrir_chamado" %}',
             cadastro_ativo: '{% url "cadastro_ativo" %}',
@@ -38,17 +31,21 @@
             autorizacao_usuarios: '{% url "autorizacao_usuarios" %}',
             admin_base_conhecimento: '{% url "admin_base_conhecimento" %}',
             cadastro_usuario: '{% url "cadastro_usuario" %}',
+            meus_tickets: '{% url "meus_tickets" %}',
             
-            // ⭐ URLs DO PORTAL DO CLIENTE (ADICIONADAS)
+            // URLs Portal do Cliente
             template_cliente: '{% url "citiesoft_home" %}',
             abrir_chamado_cliente: '{% url "abrir_chamado" %}',
             meus_chamados: '{% url "citiesoft_home" %}',
             base_conhecimento: '{% url "admin_base_conhecimento" %}'
         };
-        console.log('✅ URLs Django carregadas:', window.DjangoURLs);
+
+        // 🛡️ VERIFICAÇÃO DE USUÁRIO (A ponte que você precisava)
+        window.is_admin = {% if user.is_superuser %} true {% else %} false {% endif %};
+
+        console.log('✅ Sistema carregado para:', window.is_admin ? 'ADMIN' : 'FUNCIONÁRIO');
     </script>
 
-    <!-- Mobile Header -->
     <div class="mobile-header">
         <button class="navbar-toggler" id="sidebarToggle">
             <i class="fas fa-bars"></i>
@@ -58,10 +55,8 @@
         </div>
     </div>
 
-    <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <i class="fas fa-bars sidebar-collapsed-icon"></i>
         
@@ -76,7 +71,7 @@
                 <div class="user-avatar">{{ user.first_name|first|upper }}</div>
                 <div class="user-details">
                     <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
-                    <div class="user-role">Sistema</div>
+                    <div class="user-role">{% if user.is_superuser %}Administrador{% else %}Funcionário{% endif %}</div>
                 </div>
             </div>
 
@@ -96,7 +91,6 @@
         </div>
     </div>
 
-    <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-left">
             <div class="top-bar-logo">
@@ -116,30 +110,29 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Content Header -->
         <div class="content-header">
             {% block page_header %}
-            <h1><i class="fas fa-icon"></i> Título da Página</h1>
-            <p>Descrição da página - <span id="currentDate"></span></p>
+            <h1><i class="fas fa-desktop"></i> Painel de Controle</h1>
+            <p>Bem-vindo ao Citiesoft - <span id="currentDate"></span></p>
             {% endblock %}
         </div>
 
-        <!-- ADICIONE O CONTEÚDO ESPECÍFICO AQUI -->
+        {% if user.is_superuser %}
+        <div class="alert alert-warning border-start border-4 border-warning shadow-sm mb-4">
+            <h5><i class="fas fa-user-shield"></i> Painel Administrativo Ativo</h5>
+            <p class="mb-0">Este campo de configuração é <strong>exclusivo</strong> e funcionários não podem vê-lo.</p>
+        </div>
+        {% endif %}
+
         {% block content %}
-        <!-- Seu conteúdo aqui: cards, tabelas, formulários, etc -->
         {% endblock %}
 
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- JS Base (obrigatório em todas as telas) -->
     <script src="{% static 'menu/js/template_citiesoft.js' %}"></script>
     
-    <!-- JS Específico da Página (opcional) -->
     {% block extra_js %}{% endblock %}
 </body>
 </html>
